@@ -15,9 +15,9 @@ pgCommonServicesApi.config(options)
 
 Dev example:
 ```
-var pgCommonServicesApi = require("./pg-common-services-api");
+var pgCommonServicesApi = require("pg-common-services-api");
 pgCommonServicesApi.config({
-    endpoint: 'https://qe-common-sevices-api-pg.dcube.cf',
+    endpoint: 'https://dev-common-sevices-api-pg.dcube.cf',
     sign: false
 });
 ```
