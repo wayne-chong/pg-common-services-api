@@ -1,0 +1,17 @@
+{
+  "name": "pg-common-services-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "pg-common-services-api.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "2.461.0"
+  },
+  "devDependencies": {
+    "jest": "24.8.0"
+  }
+}
