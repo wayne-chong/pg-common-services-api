@@ -1,8 +1,7 @@
 const AWS = require('aws-sdk');
 
-let ENDPOINT;
+let ENDPOINT, HOST, STAGE;
 let PRIVATE = false;
-let HOST;
 let SIGN = true;
 let BASE_PATH = "/api/services/";
 let PN_PATH = BASE_PATH + "pushNotifications";
@@ -14,6 +13,17 @@ function config(options) {
     SIGN = !!options.sign;
     PRIVATE = !!options.private;
     HOST = options.host;
+    STAGE = options.stage;
+    return new Promise(function (resolve, reject) {
+        if (SIGN)
+            checkCredentials().then(function (data) {
+                resolve(data);
+            }).catch(function (error) {
+                reject(error);
+            })
+        else
+            resolve();
+    });
 }
 
 function checkCredentials() {
@@ -43,6 +53,8 @@ async function signAndSendRequest(path, payload) {
     let request = new AWS.HttpRequest(ENDPOINT);
     request.method = "POST";
     request.path = path;
+    if (STAGE)
+        request.path = `/${STAGE}${request.path}`;
     request.region = "ap-southeast-1";
     request.headers["presigned-expires"] = false;
     request.headers["Host"] = ENDPOINT.host;
@@ -50,7 +62,7 @@ async function signAndSendRequest(path, payload) {
         request.headers["Host"] = HOST;
     request.body = JSON.stringify(payload);
     if (SIGN) {
-        await checkCredentials();
+        // await checkCredentials();
         const signer = new AWS.Signers.V4(request, "execute-api");
         signer.addAuthorization(AWS.config.credentials, new Date());
     }
