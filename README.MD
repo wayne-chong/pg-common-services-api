@@ -2,7 +2,14 @@
 Construct and optionally sign api gateway request using AWS credentials
 
 ## To install:
-- npm install `git+https://github.com/pway123/pg-common-services-api.git`
+```
+npm install `git+https://github.com/pway123/pg-common-services-api.git`
+```
+
+## Prerequisite:
+AWS credentials are required for calculating the signature, in ECS container the credentials are fetched remotely. If running outside of ECS containers(i.e. local), need to configure AWS CLI.
+If don't want to use AWS signature, set sign = false in options
+
 
 ## Configuration:
 ```
