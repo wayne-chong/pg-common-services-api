@@ -12,6 +12,8 @@ pgCommonServicesApi.config(options)
 | ------ | ------ | ------ |
 | endpoint | string | null |
 | sign | boolean | true |
+| private | boolean | false |
+| host | string | null |
 
 Dev example:
 ```

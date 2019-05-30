@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk');
 
 let ENDPOINT;
+let PRIVATE = false;
+let HOST;
 let SIGN = true;
 let BASE_PATH = "/api/services/";
 let PN_PATH = BASE_PATH + "pushNotifications";
@@ -10,6 +12,8 @@ function config(options) {
     if (options.endpoint)
         ENDPOINT = new AWS.Endpoint(options.endpoint);
     SIGN = !!options.sign;
+    PRIVATE = !!options.private;
+    HOST = options.host;
 }
 
 function checkCredentials() {
@@ -42,6 +46,8 @@ async function signAndSendRequest(path, payload) {
     request.region = "ap-southeast-1";
     request.headers["presigned-expires"] = false;
     request.headers["Host"] = ENDPOINT.host;
+    if (PRIVATE)
+        request.headers["Host"] = HOST;
     request.body = JSON.stringify(payload);
     if (SIGN) {
         await checkCredentials();
