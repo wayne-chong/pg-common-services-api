@@ -78,4 +78,5 @@ pgCommonServicesApi.config({
 ## API supported:
 - pgCommonServicesApi.sendPushNotification(payload)
 - pgCommonServicesApi.sendEmail(payload)
+
 *returns a promise
