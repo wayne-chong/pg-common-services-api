@@ -7,6 +7,10 @@ let BASE_PATH = "/api/services/";
 let PN_PATH = BASE_PATH + "pushNotifications";
 let EMAIL_PATH = BASE_PATH + "email";
 let DEBUG_PATH = BASE_PATH + "debug";
+let HTTP_METHOD = {
+    GET: 'GET',
+    POST: 'POST'
+} 
 
 function config(options) {
     if (options.endpoint)
@@ -49,10 +53,10 @@ function checkCredentials() {
     });
 }
 
-async function signAndSendRequest(path, payload) {
+async function signAndSendRequest(path, method, payload) {
 
     let request = new AWS.HttpRequest(ENDPOINT);
-    request.method = "POST";
+    request.method = method;
     request.path = path;
     if (STAGE)
         request.path = `/${STAGE}${request.path}`;
@@ -88,16 +92,16 @@ async function signAndSendRequest(path, payload) {
 
 
 sendPushNotification = (payload) => {
-    return signAndSendRequest(PN_PATH, payload);
+    return signAndSendRequest(PN_PATH, HTTP_METHOD.POST, payload);
 }
 
 
 sendEmail = (payload) => {
-    return signAndSendRequest(EMAIL_PATH, payload);
+    return signAndSendRequest(EMAIL_PATH, HTTP_METHOD.POST, payload);
 }
 
 testApiGwConnection = (payload) => {
-    return signAndSendRequest(DEBUG_PATH, payload);
+    return signAndSendRequest(DEBUG_PATH,HTTP_METHOD.GET, payload);
 }
 
 module.exports.config = config;
