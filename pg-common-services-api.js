@@ -6,6 +6,7 @@ let SIGN = true;
 let BASE_PATH = "/api/services/";
 let PN_PATH = BASE_PATH + "pushNotifications";
 let EMAIL_PATH = BASE_PATH + "email";
+let DEBUG_PATH = BASE_PATH + "debug";
 
 function config(options) {
     if (options.endpoint)
@@ -95,7 +96,12 @@ sendEmail = (payload) => {
     return signAndSendRequest(EMAIL_PATH, payload);
 }
 
+testApiGwConnection = (payload) => {
+    return signAndSendRequest(DEBUG_PATH, payload);
+}
+
 module.exports.config = config;
 module.exports.checkCredentials = checkCredentials;
 module.exports.sendPushNotification = sendPushNotification;
 module.exports.sendEmail = sendEmail;
+module.exports.testApiGwConnection = testApiGwConnection;
