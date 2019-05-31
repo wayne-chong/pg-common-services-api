@@ -47,7 +47,7 @@ pgCommonServicesApi.config({
 ### Regional API original url
 ```
 pgCommonServicesApi.config({
-    endpoint: 'https://qe-common-sevices-api-pg.dcube.cf',
+    endpoint: 'https://su6uqpbef3.execute-api.ap-southeast-1.amazonaws.com',
     sign: false,
     stage: "dev"
 });
@@ -78,3 +78,4 @@ pgCommonServicesApi.config({
 ## API supported:
 - pgCommonServicesApi.sendPushNotification(payload)
 - pgCommonServicesApi.sendEmail(payload)
+*returns a promise

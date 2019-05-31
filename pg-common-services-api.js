@@ -62,7 +62,6 @@ async function signAndSendRequest(path, payload) {
         request.headers["Host"] = HOST;
     request.body = JSON.stringify(payload);
     if (SIGN) {
-        // await checkCredentials();
         const signer = new AWS.Signers.V4(request, "execute-api");
         signer.addAuthorization(AWS.config.credentials, new Date());
     }
