@@ -10,7 +10,7 @@ let DEBUG_PATH = BASE_PATH + "debug";
 let HTTP_METHOD = {
     GET: 'GET',
     POST: 'POST'
-} 
+}
 
 function config(options) {
     if (options.endpoint)
@@ -100,8 +100,8 @@ sendEmail = (payload) => {
     return signAndSendRequest(EMAIL_PATH, HTTP_METHOD.POST, payload);
 }
 
-testApiGwConnection = (payload) => {
-    return signAndSendRequest(DEBUG_PATH,HTTP_METHOD.GET, payload);
+testApiGwConnection = () => {
+    return signAndSendRequest(DEBUG_PATH, HTTP_METHOD.GET);
 }
 
 module.exports.config = config;
