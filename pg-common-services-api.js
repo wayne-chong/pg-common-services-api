@@ -12,8 +12,6 @@ let HTTP_METHOD = {
     POST: 'POST'
 }
 
-let expiry;
-
 async function config(options) {
     if (options.endpoint)
         ENDPOINT = new AWS.Endpoint(options.endpoint);
@@ -34,8 +32,7 @@ function loadEcsCredentials() {
         });
         AWS.config.credentials.load((err, credential) => {
             if (!err) {
-                expiry = new Date(credential.expireTime);
-                console.debug("AWS SDK remote credential ready, expiry is:", expiry);
+                console.debug("AWS SDK remote credential ready, expiry is:", credential.expireTime);
                 resolve(true);
             } else {
                 reject(err.message)
@@ -46,7 +43,7 @@ function loadEcsCredentials() {
 
 async function checkCredentials() {
     let now = new Date();
-    if (!AWS.config.credentials || (expiry && expiry <= now))
+    if (!AWS.config.credentials || AWS.config.credentials.expired)
         return await loadEcsCredentials();
     else
         return true;
