@@ -10,11 +10,17 @@ describe('Test checkCredentials', () => {
         pgCommonServicesApi = require("./pg-common-services-api");
     });
 
-    test('should resolve if credentials exits', async () => {
+    beforeEach(() => {
+        jest.resetAllMocks();
+    })
+
+    test('should resolve if credentials exists', async () => {
         mockAWS.config = {
             credentials: {}
         };
+
         let result = await pgCommonServicesApi.checkCredentials();
+
         expect(result).toEqual(true);
     });
 
@@ -31,9 +37,41 @@ describe('Test checkCredentials', () => {
                 }
             }
         };
+
         let result = await pgCommonServicesApi.checkCredentials();
+
         expect(result).toEqual(true);
-        expect(jestFn).toHaveBeenCalled();
+        expect(jestFn).toHaveBeenCalledTimes(1);
     });
+
+    test('should load credential if current one expired', async () => {
+        mockAWS.config = {
+            credentials: {
+                AccessKey: "123",
+                SecretKey: "456",
+                expired: true
+            }
+        }
+        const spy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
+
+        await pgCommonServicesApi.checkCredentials();
+
+        expect(spy).toHaveBeenCalledTimes(1);
+    })
+
+    test('should not load credential if there is one not expired', async () => {
+        mockAWS.config = {
+            credentials: {
+                AccessKey: "123",
+                SecretKey: "456",
+                expired: false
+            }
+        }
+        const spy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
+
+        await pgCommonServicesApi.checkCredentials();
+
+        expect(spy).toHaveBeenCalledTimes(0);
+    })
 
 })

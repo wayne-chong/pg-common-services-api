@@ -32,7 +32,6 @@ function loadEcsCredentials() {
         });
         AWS.config.credentials.load((err, credential) => {
             if (!err) {
-                console.debug("AWS SDK remote credential ready, expiry is:", credential.expireTime);
                 resolve(true);
             } else {
                 reject(err.message)
@@ -42,9 +41,9 @@ function loadEcsCredentials() {
 }
 
 async function checkCredentials() {
-    let now = new Date();
-    if (!AWS.config.credentials || AWS.config.credentials.expired)
-        return await loadEcsCredentials();
+    if (!AWS.config.credentials || AWS.config.credentials.expired) {
+        return await exports.loadEcsCredentials();
+    }
     else
         return true;
 }
@@ -92,16 +91,16 @@ async function signAndSendRequest(path, method, payload) {
 }
 
 
-sendPushNotification = (payload) => {
+function sendPushNotification(payload) {
     return signAndSendRequest(PN_PATH, HTTP_METHOD.POST, payload);
 }
 
 
-sendEmail = (payload) => {
+function sendEmail(payload) {
     return signAndSendRequest(EMAIL_PATH, HTTP_METHOD.POST, payload);
 }
 
-testApiGwConnection = () => {
+function testApiGwConnection() {
     return signAndSendRequest(DEBUG_PATH, HTTP_METHOD.GET);
 }
 
@@ -110,3 +109,4 @@ module.exports.checkCredentials = checkCredentials;
 module.exports.sendPushNotification = sendPushNotification;
 module.exports.sendEmail = sendEmail;
 module.exports.testApiGwConnection = testApiGwConnection;
+module.exports.loadEcsCredentials = loadEcsCredentials;
