@@ -15,7 +15,7 @@ If don't want to use AWS signature, set sign = false in options
 ```
 pgCommonServicesApi.config(options)
 ```
-*returns a promise
+*async function
 
 ### options
 | Field | Type | Default | Remark |
@@ -80,4 +80,4 @@ pgCommonServicesApi.config({
 - pgCommonServicesApi.sendEmail(payload)
 - pgCommonServicesApi.testApiGwConnection()
 
-*returns a promise
+*async functions

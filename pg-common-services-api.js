@@ -12,64 +12,47 @@ let HTTP_METHOD = {
     POST: 'POST'
 }
 
-function config(options) {
+let expiry;
+
+async function config(options) {
     if (options.endpoint)
         ENDPOINT = new AWS.Endpoint(options.endpoint);
     SIGN = !!options.sign;
     PRIVATE = !!options.private;
     HOST = options.host;
     STAGE = options.stage;
+    if (SIGN)
+        await checkCredentials();
+}
+
+function loadEcsCredentials() {
     return new Promise(function (resolve, reject) {
-        if (SIGN)
-            checkCredentials().then(function (data) {
-                resolve(data);
-            }).catch(function (error) {
-                reject(error);
-            })
-        else
-            resolve();
+        AWS.config.credentials = new AWS.RemoteCredentials({
+            httpOptions: { timeout: 5000 },
+            maxRetries: 10,
+            retryDelayOptions: { base: 200 }
+        });
+        AWS.config.credentials.load((err, credential) => {
+            if (!err) {
+                expiry = new Date(credential.expireTime);
+                console.debug("AWS SDK remote credential ready, expiry is:", expiry);
+                resolve(true);
+            } else {
+                reject(err.message)
+            }
+        })
     });
 }
 
-function checkCredentials() {
-    return new Promise(function (resolve, reject) {
-        if (AWS.config.credentials) {
-            resolve(true);
-        } else {
-            AWS.config.credentials = new AWS.RemoteCredentials({
-                httpOptions: { timeout: 5000 },
-                maxRetries: 10,
-                retryDelayOptions: { base: 200 }
-            });
-            AWS.config.credentials.load((err, credential) => {
-                if (!err) {
-                    console.debug("AWS SDK remote credential ready...")
-                    resolve(true);
-                } else {
-                    reject(err.message)
-                }
-            })
-        }
-    });
+async function checkCredentials() {
+    let now = new Date();
+    if (!AWS.config.credentials || (expiry && expiry <= now))
+        return await loadEcsCredentials();
+    else
+        return true;
 }
 
-async function signAndSendRequest(path, method, payload) {
-
-    let request = new AWS.HttpRequest(ENDPOINT);
-    request.method = method;
-    request.path = path;
-    if (STAGE)
-        request.path = `/${STAGE}${request.path}`;
-    request.region = "ap-southeast-1";
-    request.headers["presigned-expires"] = false;
-    request.headers["Host"] = ENDPOINT.host;
-    if (PRIVATE)
-        request.headers["Host"] = HOST;
-    request.body = JSON.stringify(payload);
-    if (SIGN) {
-        const signer = new AWS.Signers.V4(request, "execute-api");
-        signer.addAuthorization(AWS.config.credentials, new Date());
-    }
+function sendRequest(request) {
     const send = new AWS.NodeHttpClient();
     return new Promise((res, rej) => {
         send.handleRequest(request, null, function (response) {
@@ -88,6 +71,27 @@ async function signAndSendRequest(path, method, payload) {
             rej(err);
         });
     })
+}
+
+async function signAndSendRequest(path, method, payload) {
+
+    let request = new AWS.HttpRequest(ENDPOINT);
+    request.method = method;
+    request.path = path;
+    if (STAGE)
+        request.path = `/${STAGE}${request.path}`;
+    request.region = "ap-southeast-1";
+    request.headers["presigned-expires"] = false;
+    request.headers["Host"] = ENDPOINT.host;
+    if (PRIVATE)
+        request.headers["Host"] = HOST;
+    request.body = JSON.stringify(payload);
+    if (SIGN) {
+        await checkCredentials();
+        const signer = new AWS.Signers.V4(request, "execute-api");
+        signer.addAuthorization(AWS.config.credentials, new Date());
+    }
+    return await sendRequest(request);
 }
 
 
