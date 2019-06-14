@@ -81,3 +81,8 @@ pgCommonServicesApi.config({
 - pgCommonServicesApi.testApiGwConnection()
 
 *returns a Promise
+
+## Examples
+```
+node example/example.js
+```
