@@ -13,14 +13,16 @@ let HTTP_METHOD = {
 }
 
 async function config(options) {
-    if (options.endpoint)
-        ENDPOINT = new AWS.Endpoint(options.endpoint);
+    if (!options.endpoint) {
+        throw new Error("endpoint is a required field");
+    }
+    ENDPOINT = new AWS.Endpoint(options.endpoint);
     SIGN = !!options.sign;
     PRIVATE = !!options.private;
     HOST = options.host;
     STAGE = options.stage;
     if (SIGN)
-        await checkCredentials();
+        await exports.checkCredentials();
 }
 
 function loadEcsCredentials() {
@@ -50,7 +52,7 @@ async function checkCredentials() {
 
 function sendRequest(request) {
     const send = new AWS.NodeHttpClient();
-    return new Promise((res, rej) => {
+    return new Promise((resolve, reject) => {
         send.handleRequest(request, null, function (response) {
             let respBody = "";
             response.on("data", function (chunk) {
@@ -58,35 +60,42 @@ function sendRequest(request) {
             });
             response.on("end", function () {
                 try {
-                    res(JSON.parse(respBody));
+                    resolve(JSON.parse(respBody));
                 } catch (e) {
-                    rej(new Error(respBody));
+                    reject(new Error(respBody));
                 }
             });
         }, function (err) {
-            rej(err);
+            reject(err);
         });
     })
 }
 
-async function signAndSendRequest(path, method, payload) {
-
+async function signRequest(path, method, payload) {
     let request = new AWS.HttpRequest(ENDPOINT);
     request.method = method;
     request.path = path;
-    if (STAGE)
-        request.path = `/${STAGE}${request.path}`;
     request.region = "ap-southeast-1";
     request.headers["presigned-expires"] = false;
     request.headers["Host"] = ENDPOINT.host;
-    if (PRIVATE)
-        request.headers["Host"] = HOST;
     request.body = JSON.stringify(payload);
+    if (STAGE) {
+        request.path = `/${STAGE}${request.path}`;
+    }
+    if (PRIVATE) {
+        request.headers["Host"] = HOST;
+    }
     if (SIGN) {
-        await checkCredentials();
+        await exports.checkCredentials();
         const signer = new AWS.Signers.V4(request, "execute-api");
         signer.addAuthorization(AWS.config.credentials, new Date());
     }
+    return request;
+
+}
+
+async function signAndSendRequest(path, method, payload) {
+    const request = signRequest(path, method, payload);
     return await sendRequest(request);
 }
 
@@ -110,3 +119,5 @@ module.exports.sendPushNotification = sendPushNotification;
 module.exports.sendEmail = sendEmail;
 module.exports.testApiGwConnection = testApiGwConnection;
 module.exports.loadEcsCredentials = loadEcsCredentials;
+
+module.exports.testExports = { signRequest };
