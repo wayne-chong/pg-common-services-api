@@ -95,7 +95,7 @@ async function signRequest(path, method, payload) {
 }
 
 async function signAndSendRequest(path, method, payload) {
-    const request = signRequest(path, method, payload);
+    const request = await signRequest(path, method, payload);
     return await sendRequest(request);
 }
 
