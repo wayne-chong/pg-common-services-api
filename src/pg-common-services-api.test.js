@@ -1,3 +1,5 @@
+const { getDateAtLaterMinute } = require("./util/DateUtil");
+
 let mockAWS = {
     config: { credentials: {} },
     HttpRequest: jest.fn().mockImplementation(function () {
@@ -23,16 +25,6 @@ describe('Test checkCredentials', () => {
         jest.resetAllMocks();
     })
 
-    test('should resolve if credentials exists', async () => {
-        mockAWS.config = {
-            credentials: {}
-        };
-
-        let result = await pgCommonServicesApi.checkCredentials();
-
-        expect(result).toEqual(true);
-    });
-
     test('should load remote credential if credentials does not exist', async () => {
         mockAWS.config = {
             credentials: null
@@ -40,9 +32,9 @@ describe('Test checkCredentials', () => {
         let jestFn = jest.fn();
         mockAWS.RemoteCredentials = function () {
             return {
-                load: function (callback) {
+                refresh: function (callback) {
                     jestFn();
-                    callback(null, {});
+                    callback(null);
                 }
             }
         };
@@ -53,7 +45,7 @@ describe('Test checkCredentials', () => {
         expect(jestFn).toHaveBeenCalledTimes(1);
     });
 
-    test('should load credential if current one expired', async () => {
+    test('should load credential if credentials.expired is true', async () => {
         mockAWS.config = {
             credentials: {
                 AccessKey: "123",
@@ -61,27 +53,62 @@ describe('Test checkCredentials', () => {
                 expired: true
             }
         }
-        const spy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
+        const loadEcsCredentialsSpy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
 
         await pgCommonServicesApi.checkCredentials();
 
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(loadEcsCredentialsSpy).toHaveBeenCalledTimes(1);
     })
 
-    test('should not load credential if there is one not expired', async () => {
+    test('should load credentials if credentials.expireTime is null or undefined', async () => {
         mockAWS.config = {
             credentials: {
                 AccessKey: "123",
                 SecretKey: "456",
-                expired: false
+                expired: false,
+                expireTime: undefined,
             }
         }
-        const spy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
+        const loadEcsCredentialsSpy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
 
         await pgCommonServicesApi.checkCredentials();
 
-        expect(spy).toHaveBeenCalledTimes(0);
+        expect(loadEcsCredentialsSpy).toHaveBeenCalledTimes(1);
+    });
+
+
+    test('should load credentials if credentials.expireTime is less than 30 minutes away from the time now', async () => {
+        mockAWS.config = {
+            credentials: {
+                AccessKey: "123",
+                SecretKey: "456",
+                expired: false,
+                expireTime: getDateAtLaterMinute(29.9),
+            }
+        }
+        const loadEcsCredentialsSpy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
+
+        await pgCommonServicesApi.checkCredentials();
+
+        expect(loadEcsCredentialsSpy).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not load remote credential if credentials exists, expired is false, and expireTime is 30 minutes or more away', async () => {
+        mockAWS.config = {
+            credentials: {
+                AccessKey: "123",
+                SecretKey: "456",
+                expired: false,
+                expireTime: getDateAtLaterMinute(30),
+            }
+        }
+        const loadEcsCredentialsSpy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
+
+        await pgCommonServicesApi.checkCredentials();
+
+        expect(loadEcsCredentialsSpy).toHaveBeenCalledTimes(0);
     })
+
 
 })
 

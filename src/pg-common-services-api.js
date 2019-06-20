@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const { getDateAtLaterMinute } = require("./util/DateUtil");
 
 let ENDPOINT, HOST, STAGE;
 let PRIVATE = false;
@@ -32,7 +33,7 @@ function loadEcsCredentials() {
             maxRetries: 10,
             retryDelayOptions: { base: 200 }
         });
-        AWS.config.credentials.load((err, credential) => {
+        AWS.config.credentials.refresh((err) => {
             if (!err) {
                 resolve(true);
             } else {
@@ -42,8 +43,20 @@ function loadEcsCredentials() {
     });
 }
 
+function isAWSCredentialsExpired() {
+    if (AWS.config.credentials.expired
+        // [DY] note: expireTime is a Date object with UTC time e.g. 2019-06-20T12:18:49.000Z
+        || AWS.config.credentials.expireTime == null
+        || AWS.config.credentials.expireTime < getDateAtLaterMinute(30)
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
 async function checkCredentials() {
-    if (!AWS.config.credentials || AWS.config.credentials.expired) {
+    if (!AWS.config.credentials || isAWSCredentialsExpired()) {
         return await exports.loadEcsCredentials();
     }
     else
