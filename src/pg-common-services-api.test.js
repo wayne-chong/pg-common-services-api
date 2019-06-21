@@ -48,8 +48,7 @@ describe('Test checkCredentials', () => {
     test('should load credential if credentials.expired is true', async () => {
         mockAWS.config = {
             credentials: {
-                AccessKey: "123",
-                SecretKey: "456",
+                accessKeyId: "123",
                 expired: true
             }
         }
@@ -63,8 +62,7 @@ describe('Test checkCredentials', () => {
     test('should load credentials if credentials.expireTime is null or undefined', async () => {
         mockAWS.config = {
             credentials: {
-                AccessKey: "123",
-                SecretKey: "456",
+                accessKeyId: "123",
                 expired: false,
                 expireTime: undefined,
             }
@@ -77,13 +75,12 @@ describe('Test checkCredentials', () => {
     });
 
 
-    test('should load credentials if credentials.expireTime is less than 30 minutes away from the time now', async () => {
+    test('should load credentials if credentials.expireTime is less than 5 minutes away from the time now', async () => {
         mockAWS.config = {
             credentials: {
-                AccessKey: "123",
-                SecretKey: "456",
+                accessKeyId: "123",
                 expired: false,
-                expireTime: getDateAtLaterMinute(29.9),
+                expireTime: getDateAtLaterMinute(4.9),
             }
         }
         const loadEcsCredentialsSpy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();
@@ -93,13 +90,12 @@ describe('Test checkCredentials', () => {
         expect(loadEcsCredentialsSpy).toHaveBeenCalledTimes(1);
     });
 
-    test('should not load remote credential if credentials exists, expired is false, and expireTime is 30 minutes or more away', async () => {
+    test('should not load remote credential if credentials exists, expired is false, and expireTime is 5 minutes or more away', async () => {
         mockAWS.config = {
             credentials: {
-                AccessKey: "123",
-                SecretKey: "456",
+                accessKeyId: "123",
                 expired: false,
-                expireTime: getDateAtLaterMinute(30),
+                expireTime: getDateAtLaterMinute(5),
             }
         }
         const loadEcsCredentialsSpy = jest.spyOn(pgCommonServicesApi, "loadEcsCredentials").mockReturnValue();

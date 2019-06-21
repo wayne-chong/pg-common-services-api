@@ -47,7 +47,11 @@ function isAWSCredentialsExpired() {
     if (AWS.config.credentials.expired
         // [DY] note: expireTime is a Date object with UTC time e.g. 2019-06-20T12:18:49.000Z
         || AWS.config.credentials.expireTime == null
-        || AWS.config.credentials.expireTime < getDateAtLaterMinute(30)
+        /**
+         * 5 minutes based on Section Retrieving Security Credentials from Instance Metadata:
+         * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html
+         */
+        || AWS.config.credentials.expireTime < getDateAtLaterMinute(5)
     ) {
         return true;
     }
