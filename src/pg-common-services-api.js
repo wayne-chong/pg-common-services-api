@@ -67,6 +67,17 @@ async function checkCredentials() {
         return true;
 }
 
+function isForbiddenRequestOrServerError(response) {
+    return response.statusCode === 403 && response.statusCode >= 500;
+}
+
+/**
+ * Send the request to AWS
+ *
+ * @returns {Promise} The response body
+ * @throws  {message} Promise is rejected with an object e.g. { message: 'The security token included in the request is invalid.' }
+ * @param {AWS.HttpRequest} request
+ */
 function sendRequest(request) {
     const send = new AWS.NodeHttpClient();
     return new Promise((resolve, reject) => {
@@ -76,14 +87,15 @@ function sendRequest(request) {
                 respBody += chunk;
             });
             response.on("end", function () {
+                if (isForbiddenRequestOrServerError(response)) {
+                    reject(new Error(respBody));
+                }
                 try {
                     resolve(JSON.parse(respBody));
                 } catch (e) {
                     reject(new Error(respBody));
                 }
             });
-        }, function (err) {
-            reject(err);
         });
     })
 }
@@ -111,16 +123,29 @@ async function signRequest(path, method, payload) {
 
 }
 
-async function signAndSendRequest(path, method, payload) {
-    const request = await signRequest(path, method, payload);
-    return await sendRequest(request);
+/**
+ * Sign and send request, with retry mechanism
+ *
+ * @param {*} path full URL path
+ * @param {string} method "GET" | "POST"
+ * @param {*} payload Payload body
+ * @param {number} maxRetries Number of retries for signing and sending
+ */
+async function signAndSendRequest(path, method, payload, maxRetries = 2, numberOfRetriesUsed = 0) {
+    try {
+        const request = await signRequest(path, method, payload);
+        return await sendRequest(request);
+    } catch (e) {
+        if (numberOfRetriesUsed >= maxRetries) {
+            throw e;
+        }
+        return await signAndSendRequest(path, method, payload, maxRetries, ++numberOfRetriesUsed);
+    }
 }
-
 
 function sendPushNotification(payload) {
     return signAndSendRequest(PN_PATH, HTTP_METHOD.POST, payload);
 }
-
 
 function sendEmail(payload) {
     return signAndSendRequest(EMAIL_PATH, HTTP_METHOD.POST, payload);
