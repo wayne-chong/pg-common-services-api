@@ -18,13 +18,13 @@ pgCommonServicesApi.config(options)
 *returns a Promise
 
 ### options
-| Field | Type | Default | Remark |
-| ------ | ------ | ------ | ------ |
-| endpoint | string | null | required |
-| sign | boolean | true | |
-| private | boolean | false | |
-| host | string | null | required if private is true |
-| stage | string | null | required if not using custom domain endpoint |
+| Field    | Type    | Default | Remark                                       |
+|----------|---------|---------|----------------------------------------------|
+| endpoint | string  | null    | required                                     |
+| sign     | boolean | true    |                                              |
+| private  | boolean | false   |                                              |
+| host     | string  | null    | required if private is true                  |
+| stage    | string  | null    | required if not using custom domain endpoint |
 
 ## Examples:
 
@@ -83,6 +83,12 @@ pgCommonServicesApi.config({
 *returns a Promise
 
 ## Examples
-```
+
+```sh
 node example/example.js
 ```
+
+### TODO
+
+- add `dist/` to `.gitignore`
+- npm pack `dist/` into a `build` branch and commit the tar.gz only

@@ -1,0 +1,14 @@
+{
+    "name": "example",
+    "main": "example.js",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "start": "node example.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "pg-common-services-api": "file:../"
+    }
+}

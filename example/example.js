@@ -1,4 +1,4 @@
-var pg = require("../src/pg-common-services-api")
+const pg = require("pg-common-services-api")
 
 async function test() {
     await pg.config({
