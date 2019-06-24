@@ -25,18 +25,30 @@ async function config(options) {
         await exports.checkCredentials();
 }
 
-function loadEcsCredentials() {
+function loadCredentials() {
     return new Promise(function (resolve, reject) {
         AWS.config.credentials = new AWS.RemoteCredentials({
             httpOptions: { timeout: 5000 },
             maxRetries: 10,
             retryDelayOptions: { base: 200 }
         });
-        AWS.config.credentials.load((err, credential) => {
+        AWS.config.credentials.load((err) => {
             if (!err) {
                 resolve(true);
             } else {
-                reject(err.message)
+                // [DY|Sidd|Stacy] patch to allow getting credentials from within EC2 container
+                AWS.config.credentials = new AWS.EC2MetadataCredentials({
+                    httpOptions: { timeout: 5000 },
+                    maxRetries: 10,
+                    retryDelayOptions: { base: 200 }
+                });
+                AWS.config.credentials.load((err) => {
+                    if (!err) {
+                        resolve(true);
+                    } else {
+                        reject(err.message);
+                    }
+                })
             }
         })
     });
@@ -118,6 +130,6 @@ module.exports.checkCredentials = checkCredentials;
 module.exports.sendPushNotification = sendPushNotification;
 module.exports.sendEmail = sendEmail;
 module.exports.testApiGwConnection = testApiGwConnection;
-module.exports.loadEcsCredentials = loadEcsCredentials;
+module.exports.loadEcsCredentials = loadCredentials;
 
 module.exports.testExports = { signRequest };

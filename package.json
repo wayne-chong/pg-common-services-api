@@ -1,6 +1,6 @@
 {
   "name": "pg-common-services-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "pg-common-services-api.js",
   "scripts": {
