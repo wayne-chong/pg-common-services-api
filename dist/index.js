@@ -87,6 +87,27 @@ module.exports =
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/envConfigs.ts":
+/*!***************************!*\
+  !*** ./src/envConfigs.ts ***!
+  \***************************/
+/*! exports provided: getEnvVars */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getEnvVars", function() { return getEnvVars; });
+function getEnvVars() {
+    return {
+        awsContainerCredRelativeUri: process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI,
+        awsContainerCredFullUri: process.env.AWS_CONTAINER_CREDENTIALS_FULL_URI,
+        ec2Home: process.env.EC2_HOME,
+    };
+}
+
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -267,6 +288,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! aws-sdk */ "aws-sdk");
 /* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _DateUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DateUtil */ "./src/util/DateUtil.ts");
+/* harmony import */ var envConfigs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! envConfigs */ "./src/envConfigs.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -304,6 +326,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 };
 
 
+
 function checkCredentials() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -321,23 +344,30 @@ function checkCredentials() {
 }
 function loadCredentials() {
     return __awaiter(this, void 0, void 0, function () {
-        var configs, remoteProvider, ec2MetadataProvider, sharedIniFileProvider, providerChain, _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var configs, remoteProvider, ec2MetadataProvider, sharedIniFileProvider, providers, _a, awsContainerCredFullUri, awsContainerCredRelativeUri, ec2Home, providerChain, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     configs = { httpOptions: { timeout: 5000 }, maxRetries: 3 };
-                    remoteProvider = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["RemoteCredentials"](configs);
-                    ec2MetadataProvider = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["EC2MetadataCredentials"](configs);
-                    sharedIniFileProvider = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["SharedIniFileCredentials"]({ profile: "default" });
-                    providerChain = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["CredentialProviderChain"]([
-                        function () { return sharedIniFileProvider; },
-                        function () { return remoteProvider; },
-                        function () { return ec2MetadataProvider; },
-                    ]);
-                    _a = aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"];
+                    remoteProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["RemoteCredentials"](configs); };
+                    ec2MetadataProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["EC2MetadataCredentials"](configs); };
+                    sharedIniFileProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["SharedIniFileCredentials"]({ profile: "default" }); };
+                    providers = [];
+                    _a = Object(envConfigs__WEBPACK_IMPORTED_MODULE_2__["getEnvVars"])(), awsContainerCredFullUri = _a.awsContainerCredFullUri, awsContainerCredRelativeUri = _a.awsContainerCredRelativeUri, ec2Home = _a.ec2Home;
+                    if (awsContainerCredFullUri || awsContainerCredRelativeUri) {
+                        providers.push(remoteProvider);
+                    }
+                    if (ec2Home) {
+                        providers.push(ec2MetadataProvider);
+                    }
+                    if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !ec2Home) {
+                        providers.push(sharedIniFileProvider);
+                    }
+                    providerChain = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["CredentialProviderChain"](providers);
+                    _b = aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"];
                     return [4 /*yield*/, providerChain.resolvePromise()];
                 case 1:
-                    _a.credentials = _b.sent();
+                    _b.credentials = _c.sent();
                     return [2 /*return*/];
             }
         });
