@@ -330,9 +330,9 @@ function loadCredentials() {
                     ec2MetadataProvider = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["EC2MetadataCredentials"](configs);
                     sharedIniFileProvider = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["SharedIniFileCredentials"]({ profile: "default" });
                     providerChain = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["CredentialProviderChain"]([
+                        function () { return sharedIniFileProvider; },
                         function () { return remoteProvider; },
                         function () { return ec2MetadataProvider; },
-                        function () { return sharedIniFileProvider; },
                     ]);
                     _a = aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"];
                     return [4 /*yield*/, providerChain.resolvePromise()];

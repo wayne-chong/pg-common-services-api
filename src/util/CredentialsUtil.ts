@@ -15,9 +15,9 @@ async function loadCredentials(): Promise<void> {
     const sharedIniFileProvider = new AWS.SharedIniFileCredentials({ profile: "default" });
 
     const providerChain = new AWS.CredentialProviderChain([
+        () => sharedIniFileProvider,
         () => remoteProvider,
         () => ec2MetadataProvider,
-        () => sharedIniFileProvider,
     ]);
     AWS.config.credentials = await providerChain.resolvePromise();
 }
