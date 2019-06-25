@@ -22,6 +22,17 @@ module.exports = {
             getPromise: jest.fn(),
         }
     }),
+    SharedIniFileCredentials: jest.fn().mockImplementation(function () {
+        return {
+            getPromise: jest.fn(),
+        }
+    }),
+    CredentialProviderChain: jest.fn().mockImplementation(function () {
+        return {
+            resolvePromise: jest.fn(),
+        }
+    }),
+
     Signers: {
         V4: jest.fn().mockImplementation(function () {
             return {

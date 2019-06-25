@@ -9,16 +9,17 @@ export async function checkCredentials(): Promise<void> {
 }
 
 async function loadCredentials(): Promise<void> {
-    const configs = { httpOptions: { timeout: 5000 }, maxRetries: 10 }
-    const { awsContainerCredFullUri, awsContainerCredRelativeUri } = getEnvVars();
+    const configs = { httpOptions: { timeout: 5000 }, maxRetries: 3 }
+    const remoteProvider = new AWS.RemoteCredentials(configs);
+    const ec2MetadataProvider = new AWS.EC2MetadataCredentials(configs);
+    const sharedIniFileProvider = new AWS.SharedIniFileCredentials({ profile: "default" });
 
-    if (!!awsContainerCredFullUri || !!awsContainerCredRelativeUri) {
-        AWS.config.credentials = new AWS.RemoteCredentials(configs);
-    } else {
-        AWS.config.credentials = new AWS.EC2MetadataCredentials(configs);
-    }
-
-    await (AWS.config.credentials as AWS.Credentials).getPromise();
+    const providerChain = new AWS.CredentialProviderChain([
+        () => remoteProvider,
+        () => ec2MetadataProvider,
+        () => sharedIniFileProvider,
+    ]);
+    AWS.config.credentials = await providerChain.resolvePromise();
 }
 
 function isAWSCredentialsExpired() {

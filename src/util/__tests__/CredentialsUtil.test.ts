@@ -17,39 +17,16 @@ describe('CredentialsUtils', () => {
         });
     });
 
-    describe('When initial credentials exists and its expired', () => {
-        describe('When process is run in ECS container', () => {
-            it('should fetch credentials using AWS.RemoteCredentials', async () => {
+    describe('When credentials is expired', () => {
+        it('should get credentials from provider', async () => {
+            const initialCredentials = { accessKeyId: "initialKey", expired: false, expireTime: getDateAtLaterMinute(4.9) } as AWS.Credentials;
+            const providerCredentials = { accessKeyId: "remoteKey", expired: false, expireTime: getDateAtLaterMinute(30), getPromise: jest.fn() }
+            AWS.config.credentials = initialCredentials;
+            jest.spyOn(AWS as any, "CredentialProviderChain").mockImplementation(() => ({ resolvePromise: () => providerCredentials }));
 
-                jest.spyOn(envConfigs, "getEnvVars").mockReturnValue({ awsContainerCredRelativeUri: "mockUri" })
-                const initialCredentials = { accessKeyId: "initialKey", expired: false, expireTime: getDateAtLaterMinute(4.9) } as AWS.Credentials;
-                const remoteCredentials = { accessKeyId: "remoteKey", expired: false, expireTime: getDateAtLaterMinute(30), getPromise: jest.fn() }
-                AWS.config.credentials = initialCredentials;
-                jest.spyOn(AWS as any, "RemoteCredentials").mockImplementation(() => remoteCredentials);
+            await CredentialsUtil.checkCredentials();
 
-                await CredentialsUtil.checkCredentials();
-
-                expect(AWS.config.credentials).toEqual(remoteCredentials);
-
-            });
+            expect(AWS.config.credentials).toEqual(providerCredentials);
         });
-
-        describe('When process is not run in ECS container', () => {
-            it('should fetch credentials using AWS.EC2MetadataCredentials', async () => {
-                jest.spyOn(envConfigs, "getEnvVars").mockReturnValue({ awsContainerCredRelativeUri: undefined, awsContainerCredFullUri: undefined })
-
-                const initialCredentials = { accessKeyId: "initialKey", expired: false, expireTime: getDateAtLaterMinute(4.9) } as AWS.Credentials;
-                const EC2MetadataCredentials = { accessKeyId: "EC2MetadataKey", expired: false, expireTime: getDateAtLaterMinute(30), getPromise: jest.fn() }
-                AWS.config.credentials = initialCredentials;
-                jest.spyOn(AWS as any, "EC2MetadataCredentials").mockImplementation(() => EC2MetadataCredentials);
-
-                await CredentialsUtil.checkCredentials();
-
-                expect(AWS.config.credentials).toEqual(EC2MetadataCredentials);
-
-            });
-        });
-
-
     });
 });
