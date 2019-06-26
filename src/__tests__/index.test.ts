@@ -36,7 +36,7 @@ describe('Test pgCommonServicesApi', () => {
 
     describe('Sending signed request', () => {
         it('should send successfully', async () => {
-            pgCommonServicesApi.config({ endpoint: "mock", sign: true });
+            pgCommonServicesApi.config({ endpoint: "mock", sign: true, credentialProvider: "credentials" });
 
             const request = await pgCommonServicesApi.createAndSendRequest("/", "GET");
 

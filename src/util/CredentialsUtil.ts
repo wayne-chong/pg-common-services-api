@@ -2,7 +2,8 @@ import * as AWS from "aws-sdk";
 import { getDateAtLaterMinute } from "./DateUtil";
 import { getEnvVars } from "envConfigs";
 import { TCredentialProvider } from "interfaces";
-
+import { readFileSync } from "fs";
+import * as memoize from "memoizee";
 
 export async function checkCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promise<void> {
     if (!AWS.config.credentials || isAWSCredentialsExpired()) {
@@ -16,7 +17,7 @@ async function loadCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promis
     const ec2MetadataProvider = () => new AWS.EC2MetadataCredentials(configs);
     const sharedIniFileProvider = () => new AWS.SharedIniFileCredentials({ profile: "default" });
     const providers = [];
-    const { awsContainerCredFullUri, awsContainerCredRelativeUri, ec2Home } = getEnvVars();
+    const { awsContainerCredFullUri, awsContainerCredRelativeUri } = getEnvVars();
 
     switch (CREDENTIAL_PROVIDER) {
         case 'ecs':
@@ -38,11 +39,11 @@ async function loadCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promis
                 providers.push(remoteProvider)
             }
             // EC2
-            if (ec2Home) {
+            if (isEc2()) {
                 providers.push(ec2MetadataProvider)
             }
             // Local
-            if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !ec2Home) {
+            if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !isEc2()) {
                 providers.push(sharedIniFileProvider)
             }
     }
@@ -57,3 +58,14 @@ function isAWSCredentialsExpired() {
         // 5 minutes based on AWS docs:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html
         || (AWS.config.credentials as AWS.Credentials).expireTime < getDateAtLaterMinute(5)
 }
+
+function _isEc2(): boolean {
+    try {
+        const uuid = readFileSync("/sys/hypervisor/uuid").toString();
+        return uuid.startsWith("ec2");
+    } catch (e) {
+        return false;
+    }
+}
+
+const isEc2 = memoize(_isEc2);

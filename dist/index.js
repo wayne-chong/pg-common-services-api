@@ -101,7 +101,6 @@ function getEnvVars() {
     return {
         awsContainerCredRelativeUri: process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI,
         awsContainerCredFullUri: process.env.AWS_CONTAINER_CREDENTIALS_FULL_URI,
-        ec2Home: process.env.EC2_HOME
     };
 }
 
@@ -291,6 +290,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _DateUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DateUtil */ "./src/util/DateUtil.ts");
 /* harmony import */ var envConfigs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! envConfigs */ "./src/envConfigs.ts");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var memoizee__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! memoizee */ "memoizee");
+/* harmony import */ var memoizee__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(memoizee__WEBPACK_IMPORTED_MODULE_4__);
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -329,6 +332,8 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 
+
+
 function checkCredentials(CREDENTIAL_PROVIDER) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -346,7 +351,7 @@ function checkCredentials(CREDENTIAL_PROVIDER) {
 }
 function loadCredentials(CREDENTIAL_PROVIDER) {
     return __awaiter(this, void 0, void 0, function () {
-        var configs, remoteProvider, ec2MetadataProvider, sharedIniFileProvider, providers, _a, awsContainerCredFullUri, awsContainerCredRelativeUri, ec2Home, providerChain, _b;
+        var configs, remoteProvider, ec2MetadataProvider, sharedIniFileProvider, providers, _a, awsContainerCredFullUri, awsContainerCredRelativeUri, providerChain, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -355,7 +360,7 @@ function loadCredentials(CREDENTIAL_PROVIDER) {
                     ec2MetadataProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["EC2MetadataCredentials"](configs); };
                     sharedIniFileProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["SharedIniFileCredentials"]({ profile: "default" }); };
                     providers = [];
-                    _a = Object(envConfigs__WEBPACK_IMPORTED_MODULE_2__["getEnvVars"])(), awsContainerCredFullUri = _a.awsContainerCredFullUri, awsContainerCredRelativeUri = _a.awsContainerCredRelativeUri, ec2Home = _a.ec2Home;
+                    _a = Object(envConfigs__WEBPACK_IMPORTED_MODULE_2__["getEnvVars"])(), awsContainerCredFullUri = _a.awsContainerCredFullUri, awsContainerCredRelativeUri = _a.awsContainerCredRelativeUri;
                     switch (CREDENTIAL_PROVIDER) {
                         case 'ecs':
                             // ECS
@@ -376,11 +381,11 @@ function loadCredentials(CREDENTIAL_PROVIDER) {
                                 providers.push(remoteProvider);
                             }
                             // EC2
-                            if (ec2Home) {
+                            if (isEc2()) {
                                 providers.push(ec2MetadataProvider);
                             }
                             // Local
-                            if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !ec2Home) {
+                            if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !isEc2()) {
                                 providers.push(sharedIniFileProvider);
                             }
                     }
@@ -401,6 +406,16 @@ function isAWSCredentialsExpired() {
         // 5 minutes based on AWS docs:https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html
         || aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"].credentials.expireTime < Object(_DateUtil__WEBPACK_IMPORTED_MODULE_1__["getDateAtLaterMinute"])(5);
 }
+function _isEc2() {
+    try {
+        var uuid = Object(fs__WEBPACK_IMPORTED_MODULE_3__["readFileSync"])("/sys/hypervisor/uuid").toString();
+        return uuid.startsWith("ec2");
+    }
+    catch (e) {
+        return false;
+    }
+}
+var isEc2 = memoizee__WEBPACK_IMPORTED_MODULE_4__(_isEc2);
 
 
 /***/ }),
@@ -482,6 +497,28 @@ function isForbiddenRequestOrServerError(response) {
 /***/ (function(module, exports) {
 
 module.exports = require("aws-sdk");
+
+/***/ }),
+
+/***/ "fs":
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+
+/***/ "memoizee":
+/*!***************************!*\
+  !*** external "memoizee" ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("memoizee");
 
 /***/ })
 
