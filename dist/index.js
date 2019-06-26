@@ -355,6 +355,7 @@ function loadCredentials() {
                     providers = [];
                     _a = Object(envConfigs__WEBPACK_IMPORTED_MODULE_2__["getEnvVars"])(), awsContainerCredFullUri = _a.awsContainerCredFullUri, awsContainerCredRelativeUri = _a.awsContainerCredRelativeUri, ec2Home = _a.ec2Home;
                     if (awsContainerCredFullUri || awsContainerCredRelativeUri) {
+                        providers.push(sharedIniFileProvider);
                         providers.push(remoteProvider);
                     }
                     if (ec2Home) {

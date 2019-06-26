@@ -17,6 +17,7 @@ async function loadCredentials(): Promise<void> {
     const providers = [];
     const { awsContainerCredFullUri, awsContainerCredRelativeUri, ec2Home } = getEnvVars();
     if (awsContainerCredFullUri || awsContainerCredRelativeUri) {
+        providers.push(sharedIniFileProvider)
         providers.push(remoteProvider)
     }
     if (ec2Home) {
