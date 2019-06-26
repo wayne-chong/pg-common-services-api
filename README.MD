@@ -25,6 +25,14 @@ pgCommonServicesApi.config(options)
 | private  | boolean | false   |                                              |
 | host     | string  | null    | required if private is true                  |
 | stage    | string  | null    | required if not using custom domain endpoint |
+| credentialProvider    | string  | null    | required                        |
+
+credentialProvider can be 
+- `ecs` - Means it has to be a docker container + using the IAM role for ecs tasks
+or 
+- `ec2-metadata` - Means it is using the IAM role in your instance
+or 
+- `credentials`- Means it is using your default AWS credentials
 
 ## Examples:
 

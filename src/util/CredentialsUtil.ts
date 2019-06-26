@@ -1,30 +1,50 @@
 import * as AWS from "aws-sdk";
 import { getDateAtLaterMinute } from "./DateUtil";
 import { getEnvVars } from "envConfigs";
+import { TCredentialProvider } from "interfaces";
 
 
-export async function checkCredentials(): Promise<void> {
+export async function checkCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promise<void> {
     if (!AWS.config.credentials || isAWSCredentialsExpired()) {
-        await loadCredentials();
+        await loadCredentials(CREDENTIAL_PROVIDER);
     }
 }
 
-async function loadCredentials(): Promise<void> {
+async function loadCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promise<void> {
     const configs = { httpOptions: { timeout: 5000 }, maxRetries: 3 }
     const remoteProvider = () => new AWS.RemoteCredentials(configs);
     const ec2MetadataProvider = () => new AWS.EC2MetadataCredentials(configs);
     const sharedIniFileProvider = () => new AWS.SharedIniFileCredentials({ profile: "default" });
     const providers = [];
     const { awsContainerCredFullUri, awsContainerCredRelativeUri, ec2Home } = getEnvVars();
-    if (awsContainerCredFullUri || awsContainerCredRelativeUri) {
-        providers.push(sharedIniFileProvider)
-        providers.push(remoteProvider)
-    }
-    if (ec2Home) {
-        providers.push(ec2MetadataProvider)
-    }
-    if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !ec2Home) {
-        providers.push(sharedIniFileProvider)
+
+    switch (CREDENTIAL_PROVIDER) {
+        case 'ecs':
+            // ECS
+            providers.push(remoteProvider);
+            break;
+        case 'ec2-metadata':
+            // EC2
+            providers.push(ec2MetadataProvider);
+            break;
+        case 'credentials':
+            // Local
+            providers.push(sharedIniFileProvider);
+            break;
+        default:
+            // ECS
+            if (awsContainerCredFullUri || awsContainerCredRelativeUri) {
+                providers.push(sharedIniFileProvider)
+                providers.push(remoteProvider)
+            }
+            // EC2
+            if (ec2Home) {
+                providers.push(ec2MetadataProvider)
+            }
+            // Local
+            if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !ec2Home) {
+                providers.push(sharedIniFileProvider)
+            }
     }
     const providerChain = new AWS.CredentialProviderChain(providers);
     AWS.config.credentials = await providerChain.resolvePromise();

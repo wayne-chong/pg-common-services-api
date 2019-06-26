@@ -11,7 +11,7 @@ describe('CredentialsUtils', () => {
             const initialCredentials = { accessKeyId: "initialKey", expired: false, expireTime: getDateAtLaterMinute(30) } as AWS.Credentials;
             AWS.config.credentials = initialCredentials;
 
-            await CredentialsUtil.checkCredentials();
+            await CredentialsUtil.checkCredentials(null);
 
             expect(AWS.config.credentials).toEqual(initialCredentials);
         });
@@ -24,7 +24,7 @@ describe('CredentialsUtils', () => {
             AWS.config.credentials = initialCredentials;
             jest.spyOn(AWS as any, "CredentialProviderChain").mockImplementation(() => ({ resolvePromise: () => providerCredentials }));
 
-            await CredentialsUtil.checkCredentials();
+            await CredentialsUtil.checkCredentials(null);
 
             expect(AWS.config.credentials).toEqual(providerCredentials);
         });

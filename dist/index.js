@@ -101,7 +101,7 @@ function getEnvVars() {
     return {
         awsContainerCredRelativeUri: process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI,
         awsContainerCredFullUri: process.env.AWS_CONTAINER_CREDENTIALS_FULL_URI,
-        ec2Home: process.env.EC2_HOME,
+        ec2Home: process.env.EC2_HOME
     };
 }
 
@@ -172,6 +172,7 @@ var DEBUG_PATH = BASE_PATH + "debug";
 var ENDPOINT, HOST, STAGE;
 var PRIVATE = false;
 var SIGN = true;
+var CREDENTIAL_PROVIDER;
 function config(options) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -185,8 +186,9 @@ function config(options) {
                     PRIVATE = !!options.private;
                     HOST = options.host;
                     STAGE = options.stage;
+                    CREDENTIAL_PROVIDER = options.credentialProvider;
                     if (!SIGN) return [3 /*break*/, 2];
-                    return [4 /*yield*/, Object(util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])()];
+                    return [4 /*yield*/, Object(util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])(CREDENTIAL_PROVIDER)];
                 case 1:
                     _a.sent();
                     _a.label = 2;
@@ -260,7 +262,7 @@ function createRequest(path, method, payload) {
                         request.headers["Host"] = HOST;
                     }
                     if (!SIGN) return [3 /*break*/, 2];
-                    return [4 /*yield*/, Object(util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])()];
+                    return [4 /*yield*/, Object(util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])(CREDENTIAL_PROVIDER)];
                 case 1:
                     _a.sent();
                     signer = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Signers"].V4(request, "execute-api");
@@ -327,13 +329,13 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 
-function checkCredentials() {
+function checkCredentials(CREDENTIAL_PROVIDER) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(!aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"].credentials || isAWSCredentialsExpired())) return [3 /*break*/, 2];
-                    return [4 /*yield*/, loadCredentials()];
+                    return [4 /*yield*/, loadCredentials(CREDENTIAL_PROVIDER)];
                 case 1:
                     _a.sent();
                     _a.label = 2;
@@ -342,7 +344,7 @@ function checkCredentials() {
         });
     });
 }
-function loadCredentials() {
+function loadCredentials(CREDENTIAL_PROVIDER) {
     return __awaiter(this, void 0, void 0, function () {
         var configs, remoteProvider, ec2MetadataProvider, sharedIniFileProvider, providers, _a, awsContainerCredFullUri, awsContainerCredRelativeUri, ec2Home, providerChain, _b;
         return __generator(this, function (_c) {
@@ -354,15 +356,33 @@ function loadCredentials() {
                     sharedIniFileProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["SharedIniFileCredentials"]({ profile: "default" }); };
                     providers = [];
                     _a = Object(envConfigs__WEBPACK_IMPORTED_MODULE_2__["getEnvVars"])(), awsContainerCredFullUri = _a.awsContainerCredFullUri, awsContainerCredRelativeUri = _a.awsContainerCredRelativeUri, ec2Home = _a.ec2Home;
-                    if (awsContainerCredFullUri || awsContainerCredRelativeUri) {
-                        providers.push(sharedIniFileProvider);
-                        providers.push(remoteProvider);
-                    }
-                    if (ec2Home) {
-                        providers.push(ec2MetadataProvider);
-                    }
-                    if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !ec2Home) {
-                        providers.push(sharedIniFileProvider);
+                    switch (CREDENTIAL_PROVIDER) {
+                        case 'ecs':
+                            // ECS
+                            providers.push(remoteProvider);
+                            break;
+                        case 'ec2-metadata':
+                            // EC2
+                            providers.push(ec2MetadataProvider);
+                            break;
+                        case 'credentials':
+                            // Local
+                            providers.push(sharedIniFileProvider);
+                            break;
+                        default:
+                            // ECS
+                            if (awsContainerCredFullUri || awsContainerCredRelativeUri) {
+                                providers.push(sharedIniFileProvider);
+                                providers.push(remoteProvider);
+                            }
+                            // EC2
+                            if (ec2Home) {
+                                providers.push(ec2MetadataProvider);
+                            }
+                            // Local
+                            if (!awsContainerCredFullUri && !awsContainerCredRelativeUri && !ec2Home) {
+                                providers.push(sharedIniFileProvider);
+                            }
                     }
                     providerChain = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["CredentialProviderChain"](providers);
                     _b = aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"];

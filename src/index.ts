@@ -1,7 +1,7 @@
 import * as AWS from "aws-sdk";
-import { getDateAtLaterMinute } from "./util/DateUtil";
 import { sendRequest } from "util/RequestUtil";
 import { checkCredentials } from "util/CredentialsUtil";
+import { TCredentialProvider } from "interfaces";
 
 const REGION = "ap-southeast-1";
 const BASE_PATH = "/api/services/";
@@ -12,8 +12,9 @@ const DEBUG_PATH = BASE_PATH + "debug";
 let ENDPOINT: AWS.Endpoint, HOST: string, STAGE: string;
 let PRIVATE = false;
 let SIGN = true;
+let CREDENTIAL_PROVIDER;
 
-export async function config(options: { endpoint: string, sign?: boolean, private?: boolean, host?: string, stage?: string }): Promise<void> {
+export async function config(options: { endpoint: string, sign?: boolean, private?: boolean, host?: string, stage?: string, credentialProvider?: TCredentialProvider }): Promise<void> {
     if (!options.endpoint) {
         throw new Error("endpoint is a required field");
     }
@@ -22,8 +23,9 @@ export async function config(options: { endpoint: string, sign?: boolean, privat
     PRIVATE = !!options.private;
     HOST = options.host;
     STAGE = options.stage;
+    CREDENTIAL_PROVIDER = options.credentialProvider
     if (SIGN)
-        await checkCredentials();
+        await checkCredentials(CREDENTIAL_PROVIDER);
 }
 
 export function sendPushNotification(payload) {
@@ -75,7 +77,7 @@ async function createRequest(path: string, method: 'GET' | 'POST', payload?): Pr
         request.headers["Host"] = HOST;
     }
     if (SIGN) {
-        await checkCredentials();
+        await checkCredentials(CREDENTIAL_PROVIDER);
         // [DY] No typescript declaration for Signers: https://github.com/aws/aws-sdk-js/issues/1729
         const signer = new (AWS as any).Signers.V4(request, "execute-api");
         signer.addAuthorization(AWS.config.credentials, new Date());
