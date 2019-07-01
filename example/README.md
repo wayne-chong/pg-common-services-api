@@ -1,33 +1,21 @@
 # EXAMPLES
 
-## example.js
+## `npm run pull-envs`
+
+Use this command to pull env vars from the `pg-envs` repo!
+
+The `pg-envs` repo has been set up to store envs that are too sensitive for this public git repo
+
+NOTE: Assumes you have cloned the pg-envs repo in a sibling directory from `pg-common-services-api`
+
+## `npm run example`
 
 Used with the following envs to test if you can reach and authenticate with push notification API gateway
 
-create a .env file with the following env vars:
+NOTE: Run `npm run pull-envs` first!
 
-_Look in confluence account page for more info_
+## `npm run loadtest:pn`
 
-```sh
-QE_ENDPOINT=
-DEV_ENDPOINT=
-DEV_API_GW=
-DEV_VPC_EP=
-DEV_ENDPOINT_PTE=
-```
+Simple loop to hit push notification services with load
 
-## pn-load-test.js
-
-Simple loop to test push notification services on high load
-
-Used with the following env:
-
-create a .env file with the following env vars:
-
-
-
-```sh
-LOAD_TEST_ENDPOINT=
-```
-
-_Look in confluence account page for more info on the .env_
+NOTE: Run `npm run pull-envs` first!

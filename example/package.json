@@ -4,6 +4,7 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
+        "pull-envs": "sh scripts/pull-envs.sh",
         "example": "node example.js",
         "loadtest:pn": "node pn-load-test.js"
     },
