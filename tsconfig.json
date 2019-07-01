@@ -17,7 +17,7 @@
         "emitDecoratorMetadata": true,
         "preserveConstEnums": true,
         /* Paths */
-        "baseUrl": "src",
+        // "baseUrl": "src",
         "types": [
             "node",
             "jest"

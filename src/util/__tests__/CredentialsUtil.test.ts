@@ -1,6 +1,6 @@
 import * as CredentialsUtil from "../CredentialsUtil";
 import * as AWS from "aws-sdk";
-import { getDateAtLaterMinute } from "util/DateUtil";
+import { getDateAtLaterMinute } from "../DateUtil";
 import * as fs from "fs";
 describe('CredentialsUtils', () => {
     afterEach(() => jest.restoreAllMocks())

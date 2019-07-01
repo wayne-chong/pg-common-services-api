@@ -123,8 +123,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createAndSendRequest", function() { return createAndSendRequest; });
 /* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! aws-sdk */ "aws-sdk");
 /* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var util_RequestUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! util/RequestUtil */ "./src/util/RequestUtil.ts");
-/* harmony import */ var util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! util/CredentialsUtil */ "./src/util/CredentialsUtil.ts");
+/* harmony import */ var _util_RequestUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/RequestUtil */ "./src/util/RequestUtil.ts");
+/* harmony import */ var _util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/CredentialsUtil */ "./src/util/CredentialsUtil.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -187,7 +187,7 @@ function config(options) {
                     STAGE = options.stage;
                     CREDENTIAL_PROVIDER = options.credentialProvider;
                     if (!SIGN) return [3 /*break*/, 2];
-                    return [4 /*yield*/, Object(util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])(CREDENTIAL_PROVIDER)];
+                    return [4 /*yield*/, Object(_util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])(CREDENTIAL_PROVIDER)];
                 case 1:
                     _a.sent();
                     _a.label = 2;
@@ -227,7 +227,7 @@ function createAndSendRequest(path, method, payload, maxRetries, numberOfRetries
                     return [4 /*yield*/, createRequest(path, method, payload)];
                 case 1:
                     request = _a.sent();
-                    return [4 /*yield*/, Object(util_RequestUtil__WEBPACK_IMPORTED_MODULE_1__["sendRequest"])(request)];
+                    return [4 /*yield*/, Object(_util_RequestUtil__WEBPACK_IMPORTED_MODULE_1__["sendRequest"])(request)];
                 case 2: return [2 /*return*/, _a.sent()];
                 case 3:
                     e_1 = _a.sent();
@@ -261,7 +261,7 @@ function createRequest(path, method, payload) {
                         request.headers["Host"] = HOST;
                     }
                     if (!SIGN) return [3 /*break*/, 2];
-                    return [4 /*yield*/, Object(util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])(CREDENTIAL_PROVIDER)];
+                    return [4 /*yield*/, Object(_util_CredentialsUtil__WEBPACK_IMPORTED_MODULE_2__["checkCredentials"])(CREDENTIAL_PROVIDER)];
                 case 1:
                     _a.sent();
                     signer = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["Signers"].V4(request, "execute-api");
@@ -289,7 +289,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! aws-sdk */ "aws-sdk");
 /* harmony import */ var aws_sdk__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(aws_sdk__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _DateUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DateUtil */ "./src/util/DateUtil.ts");
-/* harmony import */ var envConfigs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! envConfigs */ "./src/envConfigs.ts");
+/* harmony import */ var _envConfigs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../envConfigs */ "./src/envConfigs.ts");
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! fs */ "fs");
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var memoizee__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! memoizee */ "memoizee");
@@ -360,7 +360,7 @@ function loadCredentials(CREDENTIAL_PROVIDER) {
                     ec2MetadataProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["EC2MetadataCredentials"](configs); };
                     sharedIniFileProvider = function () { return new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["SharedIniFileCredentials"]({ profile: "default" }); };
                     providers = [];
-                    _a = Object(envConfigs__WEBPACK_IMPORTED_MODULE_2__["getEnvVars"])(), awsContainerCredFullUri = _a.awsContainerCredFullUri, awsContainerCredRelativeUri = _a.awsContainerCredRelativeUri;
+                    _a = Object(_envConfigs__WEBPACK_IMPORTED_MODULE_2__["getEnvVars"])(), awsContainerCredFullUri = _a.awsContainerCredFullUri, awsContainerCredRelativeUri = _a.awsContainerCredRelativeUri;
                     switch (CREDENTIAL_PROVIDER) {
                         case 'ecs':
                             // ECS

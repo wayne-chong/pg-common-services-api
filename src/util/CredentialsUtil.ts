@@ -1,7 +1,7 @@
 import * as AWS from "aws-sdk";
 import { getDateAtLaterMinute } from "./DateUtil";
-import { getEnvVars } from "envConfigs";
-import { TCredentialProvider } from "interfaces";
+import { getEnvVars } from "../envConfigs";
+import { TCredentialProvider } from "../interfaces";
 import { readFileSync } from "fs";
 import * as memoize from "memoizee";
 

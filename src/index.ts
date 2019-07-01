@@ -1,7 +1,7 @@
 import * as AWS from "aws-sdk";
-import { sendRequest } from "util/RequestUtil";
-import { checkCredentials } from "util/CredentialsUtil";
-import { TCredentialProvider } from "interfaces";
+import { sendRequest } from "./util/RequestUtil";
+import { checkCredentials } from "./util/CredentialsUtil";
+import { TCredentialProvider } from "./interfaces";
 
 const REGION = "ap-southeast-1";
 const BASE_PATH = "/api/services/";
