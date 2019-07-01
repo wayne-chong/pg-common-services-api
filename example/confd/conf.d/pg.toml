@@ -1,0 +1,7 @@
+[template]
+src = ".env.tmpl"
+dest = ".env"
+keys = [
+    "/pg/dev/apigw/base_url",
+    "/pg/qe/apigw/base_url"
+]

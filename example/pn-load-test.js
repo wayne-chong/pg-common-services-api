@@ -3,7 +3,7 @@ require("dotenv").config();
 
 async function test() {
     pg.config({
-        endpoint: process.env.LOAD_TEST_ENDPOINT,
+        endpoint: process.env.QE_ENDPOINT,
         sign: true,
         credentialProvider: "credentials"
     });

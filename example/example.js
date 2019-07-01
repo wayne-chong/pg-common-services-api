@@ -88,7 +88,7 @@ async function test() {
     console.log(data2);
 
     await pg.config({
-        endpoint: process.env.DEV_API_GW,
+        endpoint: process.env.DEV_ENDPOINT,
         sign: true,
         stage: "dev",
     })
@@ -135,7 +135,7 @@ async function test() {
     //VPCE call can only be made within VPC//
     /////////////////////////////////////////
     // await pg.config({
-    //     endpoint: process.env.DEV_VPC_EP,
+    //     endpoint: process.env.DEV_VPC_EP (not implemented),
     //     sign: false,
     //     private: true,
     //     stage: "dev2",
@@ -145,7 +145,7 @@ async function test() {
     // console.log(data4);
 
     // await pg.config({
-    //     endpoint: process.env.DEV_VPC_EP,
+    //     endpoint: process.env.DEV_VPC_EP (not implemented),
     //     sign: true,
     //     private: true,
     //     stage: "dev2",

@@ -1,12 +1,10 @@
 #/bin/sh
 
-echo "--------PULLING ENVS FROM pg-envs--------"
-echo "--------ASSUMING ENVS ARE IN SIBLING FOLDER FROM pg-common-services-api--------"
-TARGET_DIR=$PWD
-cd ../../pg-envs
-git fetch
-git pull
+echo "--------PULLING ENVS FROM param store using aws credentials--------"
 
-cp ./pg-common-serivces-api-example.env $TARGET_DIR/.env
+export AWS_REGION=ap-southeast-1
 
-echo "--------FINISHED PULLING ENVS FROM pg-envs--------"
+confd -backend ssm -onetime -confdir ./confd
+
+echo "--------FINISHED PULLING ENVS--------"
+
