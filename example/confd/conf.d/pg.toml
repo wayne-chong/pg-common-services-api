@@ -3,5 +3,7 @@ src = ".env.tmpl"
 dest = ".env"
 keys = [
     "/pg/dev/apigw/base_url",
-    "/pg/qe/apigw/base_url"
+    "/pg/qe/apigw/base_url",
+    "/pg/rc/apigw/base_url",
+    "/pg/stable/apigw/base_url"
 ]

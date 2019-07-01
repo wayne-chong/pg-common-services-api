@@ -1,4 +1,4 @@
-const pg = require("../dist/index");
+const pg = require("pg-common-services-api");
 require("dotenv").config();
 
 async function test() {

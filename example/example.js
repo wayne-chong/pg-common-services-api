@@ -1,4 +1,4 @@
-const pg = require("../dist/index")
+const pg = require("pg-common-services-api")
 require("dotenv").config();
 
 async function test() {
@@ -6,7 +6,51 @@ async function test() {
         endpoint: process.env.QE_ENDPOINT,
         sign: true
     })
-    var data1 = await pg.sendPushNotification({
+
+    await pg.config({
+        endpoint: process.env.DEV_ENDPOINT,
+        sign: true
+    })
+    const devData = await pg.sendPushNotification({
+        "params": {
+            "pushTokens": [
+                {
+                    "parentId": "00000001642304",
+                    "pushToken": "fTDJMzyBI2A:APA91bHX3FMjJoKIYqMUIs4TNv2WxdFD-sZ7UIRK3-aoSaKTgnOXWC8SP5ijWCKdlVvk1a9ClzF3WYy_2T-QC9qzCFdTNLLZpYUsna80huiprWGBu_RkDVviwK0a-yHl_9WelbsNksfV",
+                    "deviceOS": "ios",
+                    "deviceModel": "iPhone 8"
+                },
+                {
+                    "parentId": "00000001642305",
+                    "pushToken": "d7_ItbEc47s:APA91bHvSTzIEf1RZNUPYtVvHUhbnED6jckoERfnRG_Zg3WiUky-Ier4sp5uc1RY7QwPmOpR814eqNJpqej2ODzZhm2Is5zRMo2WPGXrrnghDjflcSkcCUfIBYKlztp36NSmDsgmjmb0",
+                    "deviceOS": "android",
+                    "deviceModel": "Nexus 6"
+                }
+            ],
+            "pushPayload": {
+                "notification": {
+                    "title": "Test Annoucement DEMO haha",
+                    "body": "PN common service",
+                    "android_channel_id": "pg-channel",
+                    "priority": "high",
+                    "badge": "0"
+                },
+                "data": {
+                    "type": "new_announcement",
+                    "payload": "1"
+                }
+            }
+        },
+        "messageAttributes": {
+            "transactionId": 1,
+            "event": "dueDate",
+            "metadata": { "test": "abc" }
+        }
+    })
+
+    console.log("Dev environment:");
+    console.log(devData);
+    var qeData = await pg.sendPushNotification({
         "params": {
             "pushTokens": [
                 {
@@ -42,13 +86,14 @@ async function test() {
             "metadata": { "test": "abc" }
         }
     });
-    console.log(data1);
+    console.log("QE environment:");
+    console.log(qeData);
 
     await pg.config({
         endpoint: process.env.DEV_ENDPOINT,
         sign: true
     })
-    var data2 = await pg.sendPushNotification({
+    const rcData = await pg.sendPushNotification({
         "params": {
             "pushTokens": [
                 {
@@ -85,52 +130,52 @@ async function test() {
         }
     })
 
-    console.log(data2);
+    console.log("RC environment:");
+    console.log(rcData);
 
-    // await pg.config({
-    // // using dev api-gateway endpoint
-    //     endpoint: ,
-    //     sign: true,
-    //     stage: "dev",
-    // })
-    // let data3 = await pg.sendPushNotification({
-    //     "params": {
-    //         "pushTokens": [
-    //             {
-    //                 "parentId": "00000001642304",
-    //                 "pushToken": "fTDJMzyBI2A:APA91bHX3FMjJoKIYqMUIs4TNv2WxdFD-sZ7UIRK3-aoSaKTgnOXWC8SP5ijWCKdlVvk1a9ClzF3WYy_2T-QC9qzCFdTNLLZpYUsna80huiprWGBu_RkDVviwK0a-yHl_9WelbsNksfV",
-    //                 "deviceOS": "ios",
-    //                 "deviceModel": "iPhone 8"
-    //             },
-    //             {
-    //                 "parentId": "00000001642305",
-    //                 "pushToken": "d7_ItbEc47s:APA91bHvSTzIEf1RZNUPYtVvHUhbnED6jckoERfnRG_Zg3WiUky-Ier4sp5uc1RY7QwPmOpR814eqNJpqej2ODzZhm2Is5zRMo2WPGXrrnghDjflcSkcCUfIBYKlztp36NSmDsgmjmb0",
-    //                 "deviceOS": "android",
-    //                 "deviceModel": "Nexus 6"
-    //             }
-    //         ],
-    //         "pushPayload": {
-    //             "notification": {
-    //                 "title": "Test Annoucement DEMO hehe",
-    //                 "body": "PN common service",
-    //                 "android_channel_id": "pg-channel",
-    //                 "priority": "high",
-    //                 "badge": "0"
-    //             },
-    //             "data": {
-    //                 "type": "new_announcement",
-    //                 "payload": "1"
-    //             }
-    //         }
-    //     },
-    //     "messageAttributes": {
-    //         "transactionId": 1,
-    //         "event": "dueDate",
-    //         "metadata": { "test": "abc" }
-    //     }
-    // })
+    await pg.config({
+        endpoint: process.env.DEV_ENDPOINT,
+        sign: true
+    })
+    var stableData = await pg.sendPushNotification({
+        "params": {
+            "pushTokens": [
+                {
+                    "parentId": "00000001642304",
+                    "pushToken": "fTDJMzyBI2A:APA91bHX3FMjJoKIYqMUIs4TNv2WxdFD-sZ7UIRK3-aoSaKTgnOXWC8SP5ijWCKdlVvk1a9ClzF3WYy_2T-QC9qzCFdTNLLZpYUsna80huiprWGBu_RkDVviwK0a-yHl_9WelbsNksfV",
+                    "deviceOS": "ios",
+                    "deviceModel": "iPhone 8"
+                },
+                {
+                    "parentId": "00000001642305",
+                    "pushToken": "d7_ItbEc47s:APA91bHvSTzIEf1RZNUPYtVvHUhbnED6jckoERfnRG_Zg3WiUky-Ier4sp5uc1RY7QwPmOpR814eqNJpqej2ODzZhm2Is5zRMo2WPGXrrnghDjflcSkcCUfIBYKlztp36NSmDsgmjmb0",
+                    "deviceOS": "android",
+                    "deviceModel": "Nexus 6"
+                }
+            ],
+            "pushPayload": {
+                "notification": {
+                    "title": "Test Annoucement DEMO haha",
+                    "body": "PN common service",
+                    "android_channel_id": "pg-channel",
+                    "priority": "high",
+                    "badge": "0"
+                },
+                "data": {
+                    "type": "new_announcement",
+                    "payload": "1"
+                }
+            }
+        },
+        "messageAttributes": {
+            "transactionId": 1,
+            "event": "dueDate",
+            "metadata": { "test": "abc" }
+        }
+    })
 
-    // console.log(data3);
+    console.log("Stable environment:");
+    console.log(stableData);
 
     /////////////////////////////////////////
     //VPCE call can only be made within VPC//
