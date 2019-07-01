@@ -1,8 +1,9 @@
-const pg = require("pg-common-services-api")
+const pg = require("../dist/index")
+require("dotenv").config();
 
 async function test() {
     await pg.config({
-        endpoint: "https://qe-common-sevices-api-pg.dcube.cf",
+        endpoint: process.env.QE_ENDPOINT,
         sign: true
     })
     var data1 = await pg.sendPushNotification({
@@ -44,7 +45,7 @@ async function test() {
     console.log(data1);
 
     await pg.config({
-        endpoint: "https://dev-common-sevices-api-pg.dcube.cf",
+        endpoint: process.env.DEV_ENDPOINT,
         sign: true
     })
     var data2 = await pg.sendPushNotification({
@@ -87,7 +88,7 @@ async function test() {
     console.log(data2);
 
     await pg.config({
-        endpoint: "https://su6uqpbef3.execute-api.ap-southeast-1.amazonaws.com",
+        endpoint: process.env.DEV_API_GW,
         sign: true,
         stage: "dev",
     })
@@ -134,21 +135,21 @@ async function test() {
     //VPCE call can only be made within VPC//
     /////////////////////////////////////////
     // await pg.config({
-    //     endpoint: "https://vpce-07f6aa6800aea2c83-6meep72q.execute-api.ap-southeast-1.vpce.amazonaws.com",
+    //     endpoint: process.env.DEV_VPC_EP,
     //     sign: false,
     //     private: true,
     //     stage: "dev2",
-    //     host: "i4390qzy7k.execute-api.ap-southeast-1.amazonaws.com"
+    //     host: process.env.DEV_ENDPOINT_PTE
     // })
     // let data4 = await pg.sendPushNotification({});
     // console.log(data4);
 
     // await pg.config({
-    //     endpoint: "https://vpce-07f6aa6800aea2c83-6meep72q.execute-api.ap-southeast-1.vpce.amazonaws.com",
+    //     endpoint: process.env.DEV_VPC_EP,
     //     sign: true,
     //     private: true,
     //     stage: "dev2",
-    //     host: "i4390qzy7k.execute-api.ap-southeast-1.amazonaws.com"
+    //     host: process.env.DEV_ENDPOINT_PTE
     // })
     // let data5 = await pg.sendPushNotification({});
     // console.log(data5);

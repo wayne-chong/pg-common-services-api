@@ -4,11 +4,13 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "start": "node example.js"
+        "example": "node example.js",
+        "loadtest:pn": "node pn-load-test.js"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "dotenv": "^8.0.0",
         "pg-common-services-api": "file:../"
     }
 }
