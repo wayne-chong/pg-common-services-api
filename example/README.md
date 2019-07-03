@@ -20,3 +20,9 @@ Used with the following envs to test if you can reach and authenticate with push
 Simple loop to hit push notification services with load
 
 > NOTE: Run `npm run pull-envs` first!
+
+## `npm run ping:pn <dev|qe|rc|stable> <push token to replace>`
+
+Pings a PN endpoint with the push token
+
+> NOTE: Run `npm run pull-envs` first!

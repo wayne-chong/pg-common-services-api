@@ -7,7 +7,7 @@
         "pull-envs": "sh scripts/pull-envs.sh",
         "example": "node example.js",
         "loadtest:pn": "node load-test-pn.js",
-        "healthcheck:pn": "node healthcheck-pn.js",
+        "ping:pn": "node ping-pn.js",
         "healthcheck:email": "node healthcheck-email.js"
     },
     "author": "",
