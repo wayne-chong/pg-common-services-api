@@ -6,8 +6,9 @@
     "scripts": {
         "pull-envs": "sh scripts/pull-envs.sh",
         "example": "node example.js",
-        "loadtest:pn": "node pn-load-test.js",
-        "healthcheck:pn": "node healthcheck.js"
+        "loadtest:pn": "node load-test-pn.js",
+        "healthcheck:pn": "node healthcheck-pn.js",
+        "healthcheck:email": "node healthcheck-email.js"
     },
     "author": "",
     "license": "ISC",
