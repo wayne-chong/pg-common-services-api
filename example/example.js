@@ -2,10 +2,6 @@ const pg = require("pg-common-services-api")
 require("dotenv").config();
 
 async function test() {
-    await pg.config({
-        endpoint: process.env.QE_ENDPOINT,
-        sign: true
-    })
 
     await pg.config({
         endpoint: process.env.DEV_ENDPOINT,
@@ -50,6 +46,12 @@ async function test() {
 
     console.log("Dev environment:");
     console.log(devData);
+
+    await pg.config({
+        endpoint: process.env.QE_ENDPOINT,
+        sign: true
+    })
+
     var qeData = await pg.sendPushNotification({
         "params": {
             "pushTokens": [
@@ -90,7 +92,7 @@ async function test() {
     console.log(qeData);
 
     await pg.config({
-        endpoint: process.env.DEV_ENDPOINT,
+        endpoint: process.env.RC_ENDPOINT,
         sign: true
     })
     const rcData = await pg.sendPushNotification({
@@ -134,7 +136,7 @@ async function test() {
     console.log(rcData);
 
     await pg.config({
-        endpoint: process.env.DEV_ENDPOINT,
+        endpoint: process.env.STABLE_ENDPOINT,
         sign: true
     })
     var stableData = await pg.sendPushNotification({
