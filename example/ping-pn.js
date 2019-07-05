@@ -32,8 +32,8 @@ async function healthcheck() {
         sign: true,
         private: PRIVATE,
         stage: STAGE,
-        host: HOST
-
+        host: HOST,
+        credentialProvider: 'ecs'
     })
     const pushNotifData = await pg.sendPushNotification({
         "params": {
@@ -66,6 +66,8 @@ async function healthcheck() {
             "metadata": { "test": "abc" }
         }
     })
+
+    console.log(pushNotifData);
 
     if (pushNotifData.resultCode !== "200") {
         throw new Error(`------ FAILED TO CALL API GATEWAY PN SERVICE------`, pushNotifData)
