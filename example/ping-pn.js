@@ -68,7 +68,7 @@ async function healthcheck() {
     })
 
     if (pushNotifData.resultCode !== "200") {
-        throw new Error(`------ FAILED TO CALL API GATEWAY PN SERVICE------`)
+        throw new Error(`------ FAILED TO CALL API GATEWAY PN SERVICE------`, pushNotifData)
     }
     console.log(`------ SUCCESSFULLY CALLED API GATEWAY PN SERVICE------`)
     console.log(JSON.stringify(pushNotifData))
