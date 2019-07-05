@@ -28,6 +28,7 @@ const HOST = process.argv[7] || null;
 
 async function healthcheck() {
     const endpoint = API_GATEWAY_URL;
+    console.log('ecs', CREDENTIAL_PROVIDER);
     await pg.config({
         endpoint,
         sign: true,
