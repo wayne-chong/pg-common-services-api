@@ -4,6 +4,9 @@ require("dotenv").config();
 // process.argv[0] is node and 1 is the .js file path
 const API_GATEWAY_URL = process.argv[2];
 const PUSH_TOKEN = process.argv[3] || "fake_token";
+const STAGE = process.argv[4];
+const PRIVATE = process.argv[5] || false;
+const HOST = process.argv[6] || "";
 
 // function getEndpointFromArg() {
 //     const envMapArgToEndpoint = {
@@ -26,7 +29,11 @@ async function healthcheck() {
     const endpoint = API_GATEWAY_URL;
     await pg.config({
         endpoint,
-        sign: true
+        sign: true,
+        private: PRIVATE,
+        stage: STAGE,
+        host: HOST
+
     })
     const pushNotifData = await pg.sendPushNotification({
         "params": {
