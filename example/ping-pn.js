@@ -9,26 +9,8 @@ const STAGE = process.argv[5] || null;
 const PRIVATE = process.argv[6] || false;
 const HOST = process.argv[7] || null;
 
-// function getEndpointFromArg() {
-//     const envMapArgToEndpoint = {
-//         dev: process.env.DEV_ENDPOINT,
-//         qe: process.env.QE_ENDPOINT,
-//         rc: process.env.RC_ENDPOINT,
-//         stable: process.env.STABLE_ENDPOINT
-//     }
-
-//     if (envMapArgToEndpoint.hasOwnProperty(ENV_ARG)) {
-//         return envMapArgToEndpoint[ENV_ARG];
-//     }
-//     if (!ENV_ARG) {
-//         throw new Error("no env provided :(")
-//     }
-//     throw new Error(ENV_ARG + " is wrong env")
-// }
-
 async function healthcheck() {
     const endpoint = API_GATEWAY_URL;
-    console.log('ecs', CREDENTIAL_PROVIDER);
     await pg.config({
         endpoint,
         sign: true,
@@ -69,10 +51,8 @@ async function healthcheck() {
         }
     })
 
-    console.log('pushNotifData', pushNotifData);
 
     if (pushNotifData.resultCode !== "200") {
-        console.log('pushNotifData.resultCode', pushNotifData.resultCode);
         throw new Error(`------ FAILED TO CALL API GATEWAY PN SERVICE------`, pushNotifData)
     }
     console.log(`------ SUCCESSFULLY CALLED API GATEWAY PN SERVICE------`)
