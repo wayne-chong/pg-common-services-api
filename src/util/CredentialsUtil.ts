@@ -7,6 +7,7 @@ import * as memoize from "memoizee";
 
 export async function checkCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promise<void> {
     if (!AWS.config.credentials || isAWSCredentialsExpired()) {
+        console.log('here', CREDENTIAL_PROVIDER);
         await loadCredentials(CREDENTIAL_PROVIDER);
     }
 }
@@ -22,6 +23,7 @@ async function loadCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promis
     switch (CREDENTIAL_PROVIDER) {
         case 'ecs':
             // ECS
+            console.log('enter ecs');
             providers.push(remoteProvider);
             break;
         case 'ec2-metadata':
@@ -49,6 +51,7 @@ async function loadCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promis
     }
     const providerChain = new AWS.CredentialProviderChain(providers);
     AWS.config.credentials = await providerChain.resolvePromise();
+    console.log('AWS.config.credentials', AWS.config.credentials);
 }
 
 function isAWSCredentialsExpired() {
