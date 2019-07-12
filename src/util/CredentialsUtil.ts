@@ -22,7 +22,6 @@ async function loadCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promis
     switch (CREDENTIAL_PROVIDER) {
         case 'ecs':
             // ECS
-            console.log('ecs');
             providers.push(remoteProvider);
             break;
         case 'ec2-metadata':
@@ -49,18 +48,10 @@ async function loadCredentials(CREDENTIAL_PROVIDER: TCredentialProvider): Promis
             }
     }
     const providerChain = new AWS.CredentialProviderChain(providers);
-    console.log('providerChain', providerChain);
-    try {
-
-        AWS.config.credentials = await providerChain.resolvePromise();
-        console.log('AWS.config.credentials', AWS.config.credentials);
-    } catch (err) {
-        console.log('err', err);
-    }
+    AWS.config.credentials = await providerChain.resolvePromise();
 }
 
 function isAWSCredentialsExpired() {
-    console.log('a');
     return (AWS.config.credentials as AWS.Credentials).expired
         // [DY] note: expireTime is a Date object with UTC time e.g. 2019-06-20T12:18:49.000Z
         || (AWS.config.credentials as AWS.Credentials).expireTime == null

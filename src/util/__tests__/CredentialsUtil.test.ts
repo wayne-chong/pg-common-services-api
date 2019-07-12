@@ -5,7 +5,7 @@ import * as fs from "fs";
 describe('CredentialsUtils', () => {
     afterEach(() => jest.restoreAllMocks())
 
-    xdescribe('When initial credentials exists and its unexpired', () => {
+    describe('When initial credentials exists and its unexpired', () => {
         it('should just use the initial credentials', async () => {
             const initialCredentials = { accessKeyId: "initialKey", expired: false, expireTime: getDateAtLaterMinute(30) } as AWS.Credentials;
             AWS.config.credentials = initialCredentials;
@@ -16,7 +16,7 @@ describe('CredentialsUtils', () => {
         });
     });
 
-    xdescribe('When credentials is expired', () => {
+    describe('When credentials is expired', () => {
         it('should get credentials from provider', async () => {
             const initialCredentials = { accessKeyId: "initialKey", expired: false, expireTime: getDateAtLaterMinute(4.9) } as AWS.Credentials;
             const providerCredentials = { accessKeyId: "remoteKey", expired: false, expireTime: getDateAtLaterMinute(30), getPromise: jest.fn() }

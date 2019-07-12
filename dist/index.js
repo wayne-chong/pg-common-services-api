@@ -351,7 +351,7 @@ function checkCredentials(CREDENTIAL_PROVIDER) {
 }
 function loadCredentials(CREDENTIAL_PROVIDER) {
     return __awaiter(this, void 0, void 0, function () {
-        var configs, remoteProvider, ec2MetadataProvider, sharedIniFileProvider, providers, _a, awsContainerCredFullUri, awsContainerCredRelativeUri, providerChain, _b, err_1;
+        var configs, remoteProvider, ec2MetadataProvider, sharedIniFileProvider, providers, _a, awsContainerCredFullUri, awsContainerCredRelativeUri, providerChain, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -364,7 +364,6 @@ function loadCredentials(CREDENTIAL_PROVIDER) {
                     switch (CREDENTIAL_PROVIDER) {
                         case 'ecs':
                             // ECS
-                            console.log('ecs');
                             providers.push(remoteProvider);
                             break;
                         case 'ec2-metadata':
@@ -391,27 +390,16 @@ function loadCredentials(CREDENTIAL_PROVIDER) {
                             }
                     }
                     providerChain = new aws_sdk__WEBPACK_IMPORTED_MODULE_0__["CredentialProviderChain"](providers);
-                    console.log('providerChain', providerChain);
-                    _c.label = 1;
-                case 1:
-                    _c.trys.push([1, 3, , 4]);
                     _b = aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"];
                     return [4 /*yield*/, providerChain.resolvePromise()];
-                case 2:
+                case 1:
                     _b.credentials = _c.sent();
-                    console.log('AWS.config.credentials', aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"].credentials);
-                    return [3 /*break*/, 4];
-                case 3:
-                    err_1 = _c.sent();
-                    console.log('err', err_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [2 /*return*/];
             }
         });
     });
 }
 function isAWSCredentialsExpired() {
-    console.log('a');
     return aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"].credentials.expired
         // [DY] note: expireTime is a Date object with UTC time e.g. 2019-06-20T12:18:49.000Z
         || aws_sdk__WEBPACK_IMPORTED_MODULE_0__["config"].credentials.expireTime == null
