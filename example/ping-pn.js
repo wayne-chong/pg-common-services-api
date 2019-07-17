@@ -25,8 +25,8 @@ async function healthcheck() {
                 {
                     "parentId": "fakeId",
                     "pushToken": PUSH_TOKEN,
-                    "deviceOS": "ios",
-                    "deviceModel": "iPhone 8"
+                    "deviceOS": "android",
+                    "deviceModel": "Android Galaxy 8"
                 },
             ],
             "pushPayload": {
