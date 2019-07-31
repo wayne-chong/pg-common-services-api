@@ -178,29 +178,6 @@ async function test() {
 
     console.log("Stable environment:");
     console.log(stableData);
-
-    /////////////////////////////////////////
-    //VPCE call can only be made within VPC//
-    /////////////////////////////////////////
-    // await pg.config({
-    //     endpoint: process.env.DEV_VPC_EP (not implemented),
-    //     sign: false,
-    //     private: true,
-    //     stage: "dev2",
-    //     host: process.env.DEV_ENDPOINT_PTE
-    // })
-    // let data4 = await pg.sendPushNotification({});
-    // console.log(data4);
-
-    // await pg.config({
-    //     endpoint: process.env.DEV_VPC_EP (not implemented),
-    //     sign: true,
-    //     private: true,
-    //     stage: "dev2",
-    //     host: process.env.DEV_ENDPOINT_PTE
-    // })
-    // let data5 = await pg.sendPushNotification({});
-    // console.log(data5);
 }
 
 test();
