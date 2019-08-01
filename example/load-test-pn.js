@@ -2,11 +2,12 @@ const pg = require("pg-common-services-api");
 require("dotenv").config();
 
 // number of push notification payload
-const NUM_PAYLOAD = 3;
-// number of devices per payload. Max is 1000
-const NUM_DEVICES_PER_PAYLOAD = 5;
+const NUM_PAYLOAD = process.env.NUM_PAYLOAD || 3;
 // endpoint to call
-const ENDPOINT = process.env.QE_ENDPOINT;
+const ENDPOINT = process.env.PN_ENDPOINT || process.env.QE_ENDPOINT;
+
+const IOS_PUSH_TOKEN_CSV = process.env.IOS_PUSH_TOKEN_CSV || "mockIosPushToken";
+const ANDROID_PUSH_TOKEN_CSV = process.env.ANDROID_PUSH_TOKEN_CSV || "mockAndroidPushToken";
 
 const GENERIC_PUSH_PARAM = {
     "notification": {
@@ -39,7 +40,7 @@ async function test() {
 
     const failures = [];
 
-    for (let i = 0; i < NUM_PAYLOAD; i++) {
+    for (let i = 1; i <= NUM_PAYLOAD; i++) {
         params.pushPayload.notification.title = "title: " + i;
         params.pushPayload.notification.body = "data: " + i;
         const pushNotification = { params, messageAttributes };
@@ -64,28 +65,28 @@ test();
 // helper functions
 // =============================================================================
 function generatePushToken() {
-    const pushTokens = [];
-    const fakePushTarget = {
-        "parentId": "PARENT1",
-        "pushToken": "chvDlyk6VmY:APA91bFcMvEI-NnmD-rm0Kn4O9x-_54r0zYfdbcDG3cJWhEkfUgvRJu3l8jl8L0VNR0YhWUEvgDfa5sSX5c74giSEptY9m6kQXg_CorpKSLR3Rb22dQERZh4jXp6vxuTCRStYsvgPRbI",
-    };
-    const pushAndroid = {
-        ...fakePushTarget,
-        "deviceOS": "android",
-        "deviceModel": "Samsung S8"
-    };
-    const pushiOS = {
-        ...fakePushTarget,
-        "deviceOS": "ios",
-        "deviceModel": "iPhone 8"
-    };
-    for (let i = 0; i < NUM_DEVICES_PER_PAYLOAD; i++) {
-        if (i % 2 === 0) {
-            pushTokens.push(pushiOS);
-        }
-        else {
-            pushTokens.push(pushAndroid);
-        }
+    const pushTokensAndroid = typeof ANDROID_PUSH_TOKEN_CSV === "string" ? ANDROID_PUSH_TOKEN_CSV.split(",") : [];
+    const pushTokensIos = typeof IOS_PUSH_TOKEN_CSV === "string" ? IOS_PUSH_TOKEN_CSV.split(",") : [];
+
+    const pushTargetsAndroid = pushTokensAndroid.map((pushToken, index) => ({
+        pushToken,
+        parentId: "PARENT" + index,
+        deviceOS: "android",
+        deviceModel: "test device",
+    }))
+
+    const pushTargetsIos = pushTokensIos.map((pushToken, index) => ({
+        pushToken,
+        parentId: "PARENT" + index,
+        deviceOS: "ios",
+        deviceModel: "test device"
+    }))
+
+    const pushTargets = pushTargetsAndroid.concat(pushTargetsIos);
+
+    if (pushTargets.length > 1000) {
+        throw new Error("number of push targets is more than max of 1000 per payload: ", pushTargets.length)
     }
-    return pushTokens;
+
+    return pushTargets;
 }
