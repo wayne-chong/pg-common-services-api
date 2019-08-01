@@ -8,7 +8,7 @@ const ENDPOINT = process.env.PN_ENDPOINT || process.env.QE_ENDPOINT;
 const HOST = process.env.HOST;
 const IOS_PUSH_TOKEN_CSV = process.env.IOS_PUSH_TOKEN_CSV || "mockIosPushToken";
 const ANDROID_PUSH_TOKEN_CSV = process.env.ANDROID_PUSH_TOKEN_CSV || "mockAndroidPushToken";
-
+const CREDENTIAL_PROVIDER = process.env.CREDENTIAL_PROVIDER || "credentials";
 const GENERIC_PUSH_PARAM = {
     "notification": {
         "android_channel_id": "pg-channel",
@@ -25,7 +25,7 @@ async function test() {
     const configs = {
         endpoint: ENDPOINT,
         sign: true,
-        credentialProvider: "credentials"
+        credentialProvider: CREDENTIAL_PROVIDER,
     }
     if (!!HOST) {
         configs.host = HOST;
