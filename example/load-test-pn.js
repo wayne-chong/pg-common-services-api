@@ -5,7 +5,12 @@ require("dotenv").config();
 const NUM_PAYLOAD = process.env.NUM_PAYLOAD || 3;
 // endpoint to call
 const ENDPOINT = process.env.PN_ENDPOINT || process.env.QE_ENDPOINT;
+
+// for private endpoints, include the following
 const HOST = process.env.HOST;
+const PRIVATE = process.env.PRIVATE;
+const STAGE = process.env.STAGE;
+
 const IOS_PUSH_TOKEN_CSV = process.env.IOS_PUSH_TOKEN_CSV || "mockIosPushToken";
 const ANDROID_PUSH_TOKEN_CSV = process.env.ANDROID_PUSH_TOKEN_CSV || "mockAndroidPushToken";
 const CREDENTIAL_PROVIDER = process.env.CREDENTIAL_PROVIDER || "credentials";
@@ -27,8 +32,10 @@ async function test() {
         sign: true,
         credentialProvider: CREDENTIAL_PROVIDER,
     }
-    if (!!HOST) {
+    if (!!HOST && !!PRIVATE && !!STAGE) {
         configs.host = HOST;
+        configs.private = PRIVATE === "true";
+        configs.stage = STAGE;
     }
     pg.config(configs);
 
