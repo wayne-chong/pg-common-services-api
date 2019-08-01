@@ -49,7 +49,7 @@ async function test() {
         params.pushPayload.notification.body = "data: " + i;
         const pushNotification = { params, messageAttributes };
         const result = await pg.sendPushNotification(pushNotification);
-        if (result.resultCode >= 300) {
+        if (!result.resultCode || result.resultCode >= 300) {
             failures.push(result);
         }
     }
