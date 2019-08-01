@@ -14,6 +14,8 @@ const STAGE = process.env.STAGE;
 const IOS_PUSH_TOKEN_CSV = process.env.IOS_PUSH_TOKEN_CSV || "mockIosPushToken";
 const ANDROID_PUSH_TOKEN_CSV = process.env.ANDROID_PUSH_TOKEN_CSV || "mockAndroidPushToken";
 const CREDENTIAL_PROVIDER = process.env.CREDENTIAL_PROVIDER || "credentials";
+
+const MAX_TARGETS_PER_PN = 1000;
 const GENERIC_PUSH_PARAM = {
     "notification": {
         "android_channel_id": "pg-channel",
@@ -76,6 +78,7 @@ test();
 // helper functions
 // =============================================================================
 function generatePushToken() {
+
     const pushTokensAndroid = typeof ANDROID_PUSH_TOKEN_CSV === "string" ? ANDROID_PUSH_TOKEN_CSV.split(",") : [];
     const pushTokensIos = typeof IOS_PUSH_TOKEN_CSV === "string" ? IOS_PUSH_TOKEN_CSV.split(",") : [];
 
@@ -92,12 +95,20 @@ function generatePushToken() {
         deviceOS: "ios",
         deviceModel: "test device"
     }))
+    const mock = {
+        deviceOS: "ios",
+        deviceModel: "non-existent device"
+    }
+    const mockPushTargets = pushTargetsAndroid.concat(pushTargetsIos);
 
-    const pushTargets = pushTargetsAndroid.concat(pushTargetsIos);
+    let result = [].concat(mockPushTargets);
 
-    if (pushTargets.length > 1000) {
-        throw new Error("number of push targets is more than max of 1000 per payload: ", pushTargets.length)
+    for (let i = mockPushTargets.length; i < MAX_TARGETS_PER_PN; i++) {
+        const fakeTarget = Object.assign({}, mock);
+        fakeTarget.pushToken = "fakeToken" + i;
+        fakeTarget.parentId = "fakeParent" + i;
+        result.push(fakeTarget);
     }
 
-    return pushTargets;
+    return result;
 }
