@@ -5,7 +5,7 @@ require("dotenv").config();
 const NUM_PAYLOAD = process.env.NUM_PAYLOAD || 3;
 // endpoint to call
 const ENDPOINT = process.env.PN_ENDPOINT || process.env.QE_ENDPOINT;
-
+const HOST = process.env.HOST;
 const IOS_PUSH_TOKEN_CSV = process.env.IOS_PUSH_TOKEN_CSV || "mockIosPushToken";
 const ANDROID_PUSH_TOKEN_CSV = process.env.ANDROID_PUSH_TOKEN_CSV || "mockAndroidPushToken";
 
@@ -22,11 +22,15 @@ const GENERIC_PUSH_PARAM = {
 }
 
 async function test() {
-    pg.config({
+    const configs = {
         endpoint: ENDPOINT,
         sign: true,
         credentialProvider: "credentials"
-    });
+    }
+    if (!!HOST) {
+        configs.host = HOST;
+    }
+    pg.config(configs);
 
     const pushTokens = generatePushToken();
     const pushPayload = GENERIC_PUSH_PARAM;
