@@ -3,7 +3,7 @@ Construct and optionally sign api gateway request using AWS credentials
 
 ## To install:
 ```
-npm install `git+https://github.com/pway123/pg-common-services-api.git`
+npm i @pgateway/common-services-api
 ```
 
 ## Prerequisite:
@@ -95,8 +95,3 @@ pgCommonServicesApi.config({
 ```sh
 node example/example.js
 ```
-
-### TODO
-
-- add `dist/` to `.gitignore`
-- npm pack `dist/` into a `build` branch and commit the tar.gz only
