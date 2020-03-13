@@ -1,49 +1,53 @@
 {
-    "name": "pg-common-services-api",
-    "main": "dist/index.js",
-    "type": "dist/index.d.ts",
-    "version": "2.3.3",
-    "description": "",
-    "scripts": {
-        "test": "./node_modules/.bin/jest --config ./jest.config.js",
-        "build": "export TS_NODE_PROJECT=./webpack/script.tsconfig.json && ./node_modules/.bin/webpack --config webpack.config.ts && npm pack"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "npm t && npm run build"
-        }
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "aws-sdk": "2.461.0",
-        "memoizee": "^0.4.14"
-    },
-    "devDependencies": {
-        "@types/copy-webpack-plugin": "^5.0.0",
-        "@types/jest": "24.0.8",
-        "@types/node": "^8.10.49",
-        "@types/webpack": "^4.4.32",
-        "@types/webpack-node-externals": "^1.6.3",
-        "circular-dependency-plugin": "^5.0.2",
-        "clean-webpack-plugin": "^2.0.2",
-        "copy-webpack-plugin": "^5.0.3",
-        "dts-bundle-webpack": "^1.0.2",
-        "file-loader": "^3.0.1",
-        "husky": "^2.4.0",
-        "jest": "24.8.0",
-        "jest-bamboo-formatter": "^1.0.1",
-        "ts-jest": "^24.0.2",
-        "ts-loader": "^6.0.2",
-        "ts-node": "^8.2.0",
-        "tslint": "^5.17.0",
-        "tslint-config-security": "^1.16.0",
-        "tslint-sonarts": "^1.9.0",
-        "typescript": "^3.5.2",
-        "webpack": "^4.33.0",
-        "webpack-cli": "^3.3.2",
-        "webpack-node-externals": "^1.7.2",
-        "webpack-synchronizable-shell-plugin": "^0.0.7",
-        "webpack-watch-files-plugin": "^1.0.3"
+  "name": "@pgateway/common-services-api",
+  "main": "dist/index.js",
+  "type": "dist/index.d.ts",
+  "version": "2.3.3",
+  "description": "Utlity to connect to AWS API GW",
+  "scripts": {
+    "test": "jest --config ./jest.config.js",
+    "prepare": "export TS_NODE_PROJECT=./webpack/script.tsconfig.json && webpack --config webpack.config.ts",
+    "prepublishOnly": "npm t"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm t && npm run prepare"
     }
+  },
+  "author": "pgatewaydev",
+  "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "aws-sdk": "2.461.0",
+    "memoizee": "^0.4.14"
+  },
+  "devDependencies": {
+    "@types/copy-webpack-plugin": "^5.0.0",
+    "@types/jest": "24.0.8",
+    "@types/node": "^8.10.49",
+    "@types/webpack": "^4.4.32",
+    "@types/webpack-node-externals": "^1.6.3",
+    "circular-dependency-plugin": "^5.0.2",
+    "clean-webpack-plugin": "^2.0.2",
+    "copy-webpack-plugin": "^5.1.1",
+    "dts-bundle-webpack": "^1.0.2",
+    "file-loader": "^3.0.1",
+    "husky": "^2.4.0",
+    "jest": "24.8.0",
+    "jest-bamboo-formatter": "^1.0.1",
+    "ts-jest": "^24.0.2",
+    "ts-loader": "^6.0.2",
+    "ts-node": "^8.2.0",
+    "tslint": "^5.17.0",
+    "tslint-config-security": "^1.16.0",
+    "tslint-sonarts": "^1.9.0",
+    "typescript": "^3.5.2",
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.2",
+    "webpack-node-externals": "^1.7.2",
+    "webpack-synchronizable-shell-plugin": "^0.0.7",
+    "webpack-watch-files-plugin": "^1.0.3"
+  }
 }

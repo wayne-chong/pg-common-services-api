@@ -18,20 +18,20 @@ pgCommonServicesApi.config(options)
 *returns a Promise
 
 ### options
-| Field    | Type    | Default | Remark                                       |
-|----------|---------|---------|----------------------------------------------|
-| endpoint | string  | null    | required                                     |
-| sign     | boolean | true    |                                              |
-| private  | boolean | false   |                                              |
-| host     | string  | null    | required if private is true                  |
-| stage    | string  | null    | required if not using custom domain endpoint |
-| credentialProvider    | string  | null    | required                        |
+| Field              | Type    | Default | Remark                                       |
+| ------------------ | ------- | ------- | -------------------------------------------- |
+| endpoint           | string  | null    | required                                     |
+| sign               | boolean | true    |                                              |
+| private            | boolean | false   |                                              |
+| host               | string  | null    | required if private is true                  |
+| stage              | string  | null    | required if not using custom domain endpoint |
+| credentialProvider | string  | null    | required                                     |
 
-credentialProvider can be 
+credentialProvider can be
 - `ecs` - Means it has to be a docker container + using the IAM role for ecs tasks
-or 
+or
 - `ec2-metadata` - Means it is using the IAM role in your instance
-or 
+or
 - `credentials`- Means it is using your default AWS credentials
 
 ## Examples:
