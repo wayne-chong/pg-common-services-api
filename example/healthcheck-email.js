@@ -1,4 +1,4 @@
-const pg = require("pg-common-services-api")
+const pg = require("@pgateway/common-services-api")
 require("dotenv").config();
 
 async function healthcheck() {

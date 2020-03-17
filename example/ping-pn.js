@@ -1,4 +1,4 @@
-const pg = require("pg-common-services-api");
+const pg = require("@pgateway/common-services-api");
 require("dotenv").config();
 
 // process.argv[0] is node and 1 is the .js file path
