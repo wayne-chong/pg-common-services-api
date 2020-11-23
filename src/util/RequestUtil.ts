@@ -1,5 +1,4 @@
 import * as AWS from "aws-sdk"
-
 /**
  * Send the request to AWS
  *
@@ -26,10 +25,11 @@ export function sendRequest(request): Promise<any> {
                     reject(new Error(respBody));
                 }
             });
+        }, function(errorArg) {
+            reject(new Error(errorArg));
         });
     })
 }
-
 function isForbiddenRequestOrServerError(response) {
     return response.statusCode === 403 && response.statusCode >= 500;
 }
